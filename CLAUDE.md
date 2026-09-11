@@ -6,7 +6,7 @@
 
 ## What this is
 
-The Next.js frontend of **JAS Ad Studio**: the one-page studio. It has a hero, the 3-step wizard, the inline result, the example gallery, the FAQ, a project-history drawer, and the credit and order screens.
+The Next.js frontend of **JAS Ad Studio**: the one-page studio. It has a hero, the 3-step wizard, the inline result, the example gallery, the FAQ, a project-history drawer, and the credit and order screens. There is also a small owner-only `/admin` panel for orders, grants and settings (D-037).
 
 **It renders pages and UI only.** Every business rule (credits, AI, ownership, validation that matters) lives in the API (D-002, D-006).
 
