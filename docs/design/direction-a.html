@@ -1,0 +1,470 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Direction A — Ish stoli</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="board.css">
+<style>
+/* ============ DIRECTION A — "Ish stoli" (the worktable) ============ */
+.A .hero{padding:60px 0 0;position:relative}
+.A .h1{font-size:74px;line-height:1.02;letter-spacing:-.042em;font-weight:800;margin:0;max-width:15ch}
+.A .sub{font-size:19.5px;line-height:1.62;color:var(--muted);margin:20px 0 0;max-width:56ch}
+.A .sub .kw{color:var(--ink);font-weight:600}
+.A .sub .anchor{position:relative;display:inline-block}
+.A .cta{display:flex;align-items:center;gap:24px;margin-top:32px}
+
+/* the tray: the hero's main visual. Full bleed, runs off both edges. */
+.A .tray{margin-top:40px;position:relative}
+.A .tray-run{display:flex;gap:22px;align-items:flex-end;padding:0;margin-left:-40px}
+.A .tray-run .plate{flex:none;box-shadow:0 1px 2px var(--ink-08),0 14px 32px rgba(23,33,29,.11)}
+.A .t1{width:214px;height:214px;transform:rotate(-2.4deg)}
+.A .t2{width:272px;height:272px;transform:rotate(1.3deg)}
+.A .t3{width:190px;height:190px;transform:rotate(-1deg)}
+.A .t4{width:256px;height:256px;transform:rotate(2deg)}
+.A .t5{width:206px;height:206px;transform:rotate(-1.8deg)}
+.A .t6{width:272px;height:272px;transform:rotate(.8deg)}
+.A .t7{width:196px;height:196px;transform:rotate(-2deg)}
+
+/* the drop slot lives in the tray: the seller's own photo goes here */
+.A .slot{flex:none;width:250px;height:250px;border-radius:var(--r-lg);
+  border:1.5px dashed var(--primary);background:rgba(22,61,50,.045);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  transform:rotate(1.4deg)}
+.A .slot .plus{width:40px;height:40px;border-radius:999px;background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;line-height:1}
+.A .slot .txt{font-size:14.5px;font-weight:700;color:var(--primary);text-align:center;line-height:1.35}
+
+/* ---- step 1: two-pane workbench. Product pinned right, never lost. ---- */
+.A .wb{display:grid;grid-template-columns:1fr 470px;min-height:0}
+.A .wb-l{padding:40px 52px 48px;border-right:1px solid var(--border)}
+.A .wb-r{padding:40px 44px;background:var(--stone-1)}
+.A .steps{display:flex;align-items:center;gap:0;margin:0 0 34px}
+.A .step{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;color:var(--muted)}
+.A .step .n{width:28px;height:28px;border-radius:999px;border:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700}
+.A .step.on{color:var(--ink)}
+.A .step.on .n{background:var(--primary);border-color:var(--primary);color:#fff}
+.A .step-gap{flex:1;height:1px;background:var(--border);margin:0 16px}
+.A .wb-h{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px}
+.A .wb-s{font-size:15px;color:var(--muted);margin:0 0 30px;line-height:1.55}
+.A .fld{margin-bottom:24px}
+.A .guide{border:1px solid var(--border);border-radius:var(--r-md);padding:18px 20px;background:#fff}
+.A .guide h4{font-size:14px;font-weight:800;margin:0 0 10px}
+.A .guide ul{margin:0;padding:0 0 0 18px;font-size:14px;line-height:1.85;color:var(--muted)}
+.A .foot{display:flex;align-items:center;gap:18px;margin-top:30px;padding-top:24px;
+  border-top:1px solid var(--border)}
+.A .thumbs{display:flex;gap:10px;margin-top:12px}
+.A .thumbs .plate{width:76px;height:76px;border-radius:var(--r-sm);border:1px solid var(--border)}
+.A .thumbs .add{width:76px;height:76px;border-radius:var(--r-sm);border:1.5px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px}
+.A .rp{font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 14px}
+.A .rp-main{width:100%;height:330px;border-radius:var(--r-lg);border:1px solid var(--border)}
+.A .meta{margin-top:18px;font-size:14px;line-height:1.9;color:var(--muted)}
+.A .meta b{color:var(--ink);font-weight:600}
+.A .prim{position:absolute;top:14px;left:14px}
+
+/* ---- upload in progress ---- */
+.A .up-card{border:1px solid var(--border);border-radius:var(--r-lg);background:#fff;overflow:hidden}
+.A .up-row{display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.A .up-row:last-child{border-bottom:0}
+.A .up-row .plate{width:56px;height:56px;border-radius:10px;flex:none}
+.A .up-nm{flex:1;min-width:0}
+.A .up-nm .n{font-size:14.5px;font-weight:600;display:block}
+.A .up-nm .s{font-size:13px;color:var(--muted)}
+.A .bar{height:5px;border-radius:999px;background:var(--stone-2);width:210px;overflow:hidden;flex:none}
+.A .bar i{display:block;height:100%;background:var(--primary);border-radius:999px}
+.A .ok{width:24px;height:24px;border-radius:999px;background:var(--primary);color:#fff;flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.A .skel{width:56px;height:56px;border-radius:10px;flex:none;
+  background:linear-gradient(100deg,var(--stone-2) 30%,var(--stone-1) 50%,var(--stone-2) 70%)}
+.A .err{padding:14px 20px;background:rgba(22,61,50,.05);border-top:1px solid var(--border);
+  font-size:14px;line-height:1.55}
+.A .err b{display:block;margin-bottom:3px}
+
+/* ---- mobile ---- */
+.Am{font-size:16px}
+.Am .mnav{height:60px;display:flex;align-items:center;padding:0 20px;gap:12px;
+  border-bottom:1px solid var(--border)}
+.Am .mh{padding:28px 20px 0}
+.Am .h1{font-size:34px;line-height:1.08;letter-spacing:-.035em;font-weight:800;margin:0}
+.Am .sub{font-size:16.5px;line-height:1.58;color:var(--muted);margin:16px 0 0}
+.Am .sub .kw{color:var(--ink);font-weight:600}
+.Am .btn{width:100%;margin-top:22px}
+.Am .mtray{display:flex;gap:12px;padding:30px 0 0 20px;align-items:flex-end;overflow:hidden}
+.Am .mtray .plate{flex:none;box-shadow:0 8px 20px rgba(23,33,29,.10)}
+.Am .msec{padding:22px 20px}
+</style>
+
+<body class="A">
+<div class="board">
+ <div class="board-head">
+  <span class="tag">Direction A</span>
+  <h1>Ish stoli &nbsp;/&nbsp; the worktable</h1>
+  <p>The page is a workbench, not a brochure. The hero's main visual is a <b>tray of real product photos</b> running off both edges, with one empty slot cut into it: the seller's own photo is the missing piece. Below the fold the studio is a fixed two-pane workbench: controls on the left, the seller's product pinned on the right so it is never off screen. Annotation marks do real work, not decoration.</p>
+ </div>
+
+ <!-- ================= HERO ================= -->
+ <p class="cap">1 &nbsp;·&nbsp; Hero <span>— desktop 1440 &nbsp;+&nbsp; 390</span></p>
+ <div class="row">
+  <div class="ab ab-d" style="height:880px">
+    <div class="wm nav">
+      <span class="logo">JAS <b>Ad Studio</b></span>
+      <ul><li>Studiya</li><li>Misollar</li><li>Qanday ishlaydi</li><li>Savollar</li></ul>
+      <span class="sp"></span>
+      <span style="font-size:14.5px;font-weight:600;color:var(--muted)">Kirish</span>
+    </div>
+
+    <div class="hero">
+      <div class="wm" style="position:relative">
+        <h1 class="h1">Mahsulot rasmi bor.<br>Reklama g‘oyasi-chi?</h1>
+        <p class="sub">Rasmni yuklang. Mahsulotingizga mos <span class="kw">ssenariy</span> va tayyor
+          <span class="kw">prompt</span> oling. Videoni <span class="kw anchor">Google&nbsp;Flow<!--
+            annotation 1: circles "Google Flow" and names who actually makes the video.
+            This is the never-imply-video rule, drawn.
+          --><span class="ann" style="left:-15px;top:-13px">
+            <svg width="176" height="50" viewBox="0 0 176 50" fill="none">
+              <path d="M88 5.5C62 2 28 4 13 11 -1 17.5 2 30 20 38c22 9 76 10 110 4 25-4.5 34-13 26-21C147 12 118 5 88 5.5Z"
+                    stroke="#163D32" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M146 36c12 6 22 13 28 21" stroke="#163D32" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            </span><span class="ann" style="left:121px;top:5px">
+            <svg width="420" height="74" viewBox="0 0 420 74" fill="none">
+              <path d="M408 44C318 64 152 58 32 22" stroke="#163D32" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M28 4l6 17-18 1" stroke="#163D32" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="ann-t sm" style="position:absolute;left:404px;top:24px">videoni Google Flow tayyorlaydi,<br>biz emas</span>
+          </span></span>’da tayyorlaysiz.</p>
+        <div class="cta">
+          <button class="btn btn-p">Reklama promptini tayyorlash</button>
+          <button class="btn btn-g">Misollarni ko‘rish</button>
+        </div>
+      </div>
+
+      <!-- the tray: hero's main visual -->
+      <div class="tray">
+        <div class="tray-run">
+          <img class="plate t1" src="img/notebook.jpg" alt="Ko‘k daftar, sotuvchi yuklagan mahsulot rasmi">
+          <img class="plate t2" src="img/rotary.jpg" alt="Eski disklik telefon">
+          <img class="plate t3" src="img/wipes.jpg" alt="Nam salfetka">
+          <div class="slot">
+            <span class="plus">+</span>
+            <span class="txt">Mahsulot rasmingizni<br>shu yerga tashlang</span>
+          </div>
+          <img class="plate t4" src="img/car.jpg" alt="Yengil avtomobil">
+          <img class="plate t5" src="img/key.jpg" alt="Bronza kalit">
+          <img class="plate t6" src="img/laptop.jpg" alt="Noutbuk">
+          <img class="plate t7" src="img/charger.jpg" alt="Quvvatlagich va kabel">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ab ab-m Am" style="height:844px">
+    <div class="mnav">
+      <span class="logo" style="font-size:16px">JAS <b>Ad Studio</b></span>
+      <span class="sp" style="flex:1"></span>
+      <span style="font-size:14.5px;font-weight:600;color:var(--muted)">Kirish</span>
+    </div>
+    <div class="mh">
+      <h1 class="h1">Mahsulot rasmi bor.<br>Reklama g‘oyasi-chi?</h1>
+      <p class="sub">Rasmni yuklang. Mahsulotingizga mos <span class="kw">ssenariy</span> va tayyor
+        <span class="kw">prompt</span> oling. Videoni Google Flow’da tayyorlaysiz.</p>
+      <button class="btn btn-p">Reklama promptini tayyorlash</button>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-g" style="font-size:15.5px">Misollarni ko‘rish</button>
+      </div>
+    </div>
+    <div class="mtray">
+      <img class="plate" src="img/rotary.jpg" style="width:150px;height:150px;border-radius:16px;transform:rotate(-2deg)" alt="Eski disklik telefon">
+      <div class="slot" style="width:140px;height:140px;transform:rotate(1.5deg)">
+        <span class="plus" style="width:34px;height:34px;font-size:20px">+</span>
+        <span class="txt" style="font-size:13px">Rasmingiz<br>shu yerga</span>
+      </div>
+      <img class="plate" src="img/car.jpg" style="width:152px;height:152px;border-radius:16px;transform:rotate(-1deg)" alt="Yengil avtomobil">
+    </div>
+    <div class="msec" style="padding-top:34px">
+      <div class="ann" style="position:relative;height:0">
+        <svg width="120" height="46" viewBox="0 0 120 46" fill="none" style="position:absolute;left:6px;top:-22px">
+          <path d="M14 2c-8 12-9 22-2 28 9 8 28 10 48 7" stroke="#163D32" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M52 31l10 6-11 4" stroke="#163D32" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="ann-t sm" style="position:absolute;left:76px;top:8px">4 tagacha rasm</span>
+      </div>
+    </div>
+  </div>
+ </div>
+
+ <!-- ================= STEP 1 ================= -->
+ <p class="cap">2 &nbsp;·&nbsp; Sehrgar, 1-qadam: Mahsulot <span>— the brief form. The product is pinned right and never leaves the screen.</span></p>
+ <div class="row">
+  <div class="ab ab-d" style="height:986px">
+    <div class="wm nav">
+      <span class="logo">JAS <b>Ad Studio</b></span>
+      <ul><li>Studiya</li><li>Misollar</li><li>Qanday ishlaydi</li><li>Savollar</li></ul>
+      <span class="sp"></span>
+      <button class="btn btn-s btn-sm">Loyihalarim</button>
+    </div>
+    <div class="wb" style="height:914px">
+      <div class="wb-l">
+        <div class="steps">
+          <span class="step on"><span class="n">1</span>Mahsulot</span>
+          <span class="step-gap"></span>
+          <span class="step"><span class="n">2</span>Reklama yo‘nalishi</span>
+          <span class="step-gap"></span>
+          <span class="step"><span class="n">3</span>Tekshirish va tayyorlash</span>
+        </div>
+
+        <h2 class="wb-h">Mahsulotingizni tanishtiring</h2>
+        <p class="wb-s">Rasm va ikki qator matn yetarli. Qolganini biz so‘raymiz.</p>
+
+        <div class="fld">
+          <label class="lbl">Mahsulot rasmi</label>
+          <div class="thumbs">
+            <img class="plate" src="img/phones.jpg" alt="Uchta telefon, asosiy rasm" style="outline:2px solid var(--primary);outline-offset:2px">
+            <img class="plate" src="img/laptop.jpg" alt="Noutbuk">
+            <span class="add">+</span>
+            <span class="add">+</span>
+          </div>
+          <p class="help">Birinchi rasm asosiy. Bosib boshqasini asosiy qilishingiz mumkin. 4 tagacha, har biri 10 MB gacha.</p>
+        </div>
+
+        <div class="fld">
+          <label class="lbl">Mahsulot nomi</label>
+          <div class="inp">Pixel 9a, 128 GB</div>
+        </div>
+
+        <div class="fld">
+          <label class="lbl">Qisqa tavsif</label>
+          <div class="inp ta focus">Uch rangda: siyoh ko‘k, marjon va oq. Original, kafolat bilan.
+            Toshkent bo‘ylab yetkazib berish bor.</div>
+          <div style="display:flex;justify-content:space-between;margin-top:7px">
+            <span class="help" style="margin:0">Faqat aniq narsani yozing. O‘ylab topilgan da’vo promptga tushmaydi.</span>
+            <span class="count">118 / 2000</span>
+          </div>
+        </div>
+
+        <div class="guide">
+          <h4>Yaxshi natija uchun:</h4>
+          <ul>
+            <li>mahsulot aniq ko‘rinsin</li>
+            <li>rasm juda xira bo‘lmasin</li>
+            <li>bir xil model va variant yuborilsin</li>
+            <li>yorliq muhim bo‘lsa, o‘qiladigan rasm qo‘shilsin</li>
+          </ul>
+        </div>
+
+        <div class="foot">
+          <button class="btn btn-p">Davom etish</button>
+          <span style="font-size:14px;color:var(--muted)">2-qadam: reklama yo‘nalishi</span>
+        </div>
+      </div>
+
+      <div class="wb-r" style="position:relative">
+        <p class="rp">Sizning mahsulotingiz</p>
+        <div style="position:relative">
+          <img class="plate rp-main" src="img/phones.jpg" alt="Uchta telefon, asosiy rasm">
+          <span class="pill cit prim" style="height:30px;font-size:12.5px;font-weight:700">Asosiy</span>
+        </div>
+        <div class="meta">
+          <div><b>Pixel 9a, 128 GB</b></div>
+          <div>2 ta rasm · 1365 × 2048 · JPG</div>
+        </div>
+        <hr class="hair" style="margin:22px 0">
+        <p class="rp">Keyingi qadamlar</p>
+        <div class="meta" style="margin-top:0">
+          <div>2. Maqsad, format, platforma</div>
+          <div>3. Tekshirish, so‘ng prompt</div>
+        </div>
+
+        <!-- annotation 2: the product stays here. A real promise about the layout. -->
+        <div class="ann" style="left:-56px;top:302px">
+          <svg width="88" height="60" viewBox="0 0 88 60" fill="none">
+            <path d="M4 54C2 36 10 20 26 12c14-7 33-8 52-4" stroke="#163D32" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M68 2l12 6-9 8" stroke="#163D32" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="ann-t sm" style="position:absolute;left:-12px;top:56px;white-space:normal;width:150px">oxirigacha<br>ko‘rinib turadi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ab ab-m Am" style="height:986px">
+    <div class="mnav">
+      <span style="font-size:15px;font-weight:700">1-qadam</span>
+      <span style="font-size:15px;color:var(--muted);font-weight:500">/ 3</span>
+      <span class="sp" style="flex:1"></span>
+      <span style="font-size:14.5px;font-weight:600;color:var(--muted)">Loyihalarim</span>
+    </div>
+    <div style="height:3px;background:var(--stone-2)"><i style="display:block;height:3px;width:33%;background:var(--primary)"></i></div>
+
+    <!-- the product stays visible on mobile as a sticky strip, not a hidden pane -->
+    <div style="display:flex;gap:12px;align-items:center;padding:14px 20px;background:var(--stone-1);
+                border-bottom:1px solid var(--border)">
+      <img class="plate" src="img/phones.jpg" style="width:54px;height:54px;border-radius:10px" alt="Uchta telefon">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14.5px;font-weight:700">Pixel 9a, 128 GB</div>
+        <div style="font-size:13px;color:var(--muted)">2 ta rasm yuklandi</div>
+      </div>
+      <span class="pill" style="height:30px;font-size:12.5px">Ko‘rish</span>
+    </div>
+
+    <div class="msec">
+      <h2 style="font-size:25px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px">Mahsulotingizni tanishtiring</h2>
+      <p style="font-size:15px;color:var(--muted);margin:0 0 24px;line-height:1.55">Rasm va ikki qator matn yetarli.</p>
+
+      <label class="lbl">Mahsulot rasmi</label>
+      <div class="thumbs" style="margin-bottom:22px">
+        <img class="plate" src="img/phones.jpg" style="width:66px;height:66px" alt="Uchta telefon">
+        <img class="plate" src="img/charger.jpg" style="width:66px;height:66px" alt="Quvvatlagich">
+        <span class="add" style="width:66px;height:66px">+</span>
+        <span class="add" style="width:66px;height:66px">+</span>
+      </div>
+
+      <div class="fld"><label class="lbl">Mahsulot nomi</label><div class="inp">Pixel 9a, 128 GB</div></div>
+      <div class="fld" style="margin-bottom:0">
+        <label class="lbl">Qisqa tavsif</label>
+        <div class="inp ta focus" style="min-height:96px">Uch rangda: siyoh ko‘k, marjon va oq. Original, kafolat bilan.</div>
+        <div style="display:flex;justify-content:space-between;margin-top:7px">
+          <span class="help" style="margin:0">Faqat aniq narsani yozing.</span><span class="count">72 / 2000</span>
+        </div>
+      </div>
+
+      <div class="guide" style="margin-top:24px">
+        <h4>Yaxshi natija uchun:</h4>
+        <ul>
+          <li>mahsulot aniq ko‘rinsin</li>
+          <li>rasm juda xira bo‘lmasin</li>
+          <li>bir xil model va variant yuborilsin</li>
+          <li>yorliq muhim bo‘lsa, o‘qiladigan rasm qo‘shilsin</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 20px;background:var(--bg);
+                border-top:1px solid var(--border)">
+      <button class="btn btn-p" style="width:100%">Davom etish</button>
+    </div>
+  </div>
+ </div>
+
+ <!-- ================= UPLOAD IN PROGRESS ================= -->
+ <p class="cap">3 &nbsp;·&nbsp; Rasm yuklanmoqda <span>— the neglected state: four files, four different fates, all readable at once.</span></p>
+ <div class="row">
+  <div class="ab ab-d" style="height:700px">
+    <div class="wm nav">
+      <span class="logo">JAS <b>Ad Studio</b></span>
+      <ul><li>Studiya</li><li>Misollar</li><li>Qanday ishlaydi</li><li>Savollar</li></ul>
+      <span class="sp"></span>
+      <button class="btn btn-s btn-sm">Loyihalarim</button>
+    </div>
+    <div class="wb" style="height:628px">
+      <div class="wb-l">
+        <div class="steps">
+          <span class="step on"><span class="n">1</span>Mahsulot</span>
+          <span class="step-gap"></span>
+          <span class="step"><span class="n">2</span>Reklama yo‘nalishi</span>
+          <span class="step-gap"></span>
+          <span class="step"><span class="n">3</span>Tekshirish va tayyorlash</span>
+        </div>
+        <h2 class="wb-h">Rasmlar yuklanmoqda</h2>
+        <p class="wb-s">Sahifani yopmang. Tayyor bo‘lganini pastda belgilab boramiz.</p>
+
+        <div class="up-card">
+          <div class="up-row">
+            <img class="plate" src="img/phones.jpg" alt="Uchta telefon">
+            <span class="up-nm"><span class="n">pixel-9a-uchta.jpg</span><span class="s">3,4 MB · tayyor</span></span>
+            <span class="ok">✓</span>
+          </div>
+          <div class="up-row">
+            <img class="plate" src="img/charger.jpg" alt="Quvvatlagich">
+            <span class="up-nm"><span class="n">quvvatlagich-20w.jpg</span><span class="s">2,1 MB · 68%</span></span>
+            <span class="bar"><i style="width:68%"></i></span>
+          </div>
+          <div class="up-row">
+            <span class="skel"></span>
+            <span class="up-nm"><span class="n">IMG_20260912_141833.jpg</span><span class="s">8,7 MB · navbatda</span></span>
+            <span class="bar"><i style="width:0%"></i></span>
+          </div>
+          <div class="up-row">
+            <span class="skel" style="background:var(--stone-2)"></span>
+            <span class="up-nm"><span class="n">narxlar.pdf</span>
+              <span class="s" style="color:var(--primary);font-weight:600">Bu rasm emas</span></span>
+            <button class="btn btn-s btn-sm" style="height:36px;font-size:13.5px">Olib tashlash</button>
+          </div>
+          <div class="err">
+            <b>narxlar.pdf qabul qilinmadi.</b>
+            JPG, PNG yoki WebP yuboring. PDF ichidagi rasmni alohida saqlab, keyin yuklang.
+          </div>
+        </div>
+
+        <div class="foot">
+          <button class="btn btn-p" style="opacity:.42">Davom etish</button>
+          <span style="font-size:14px;color:var(--muted)">1 ta rasm tayyor, 2 tasi yuklanmoqda</span>
+        </div>
+      </div>
+
+      <div class="wb-r" style="position:relative">
+        <p class="rp">Sizning mahsulotingiz</p>
+        <div style="position:relative">
+          <img class="plate" src="img/phones.jpg" style="width:100%;height:300px;border:1px solid var(--border)" alt="Uchta telefon">
+          <span class="pill cit prim" style="height:30px;font-size:12.5px;font-weight:700">Asosiy</span>
+        </div>
+        <div class="meta"><div><b>Nomsiz loyiha</b></div><div>1 / 4 rasm tayyor</div></div>
+
+        <div class="ann" style="left:20px;top:430px">
+          <svg width="180" height="34" viewBox="0 0 180 34" fill="none">
+            <path d="M2 30c30-18 84-26 168-24" stroke="#163D32" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M156 0l16 6-13 9" stroke="#163D32" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="ann-t sm" style="position:absolute;left:0;top:36px;white-space:normal;width:300px">birinchi rasm tayyor bo‘lishi bilan<br>shu yerda ko‘rinadi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ab ab-m Am" style="height:700px">
+    <div class="mnav">
+      <span style="font-size:15px;font-weight:700">1-qadam</span>
+      <span style="font-size:15px;color:var(--muted);font-weight:500">/ 3</span>
+      <span class="sp" style="flex:1"></span>
+      <span style="font-size:14.5px;font-weight:600;color:var(--muted)">Bekor qilish</span>
+    </div>
+    <div style="height:3px;background:var(--stone-2)"><i style="display:block;height:3px;width:33%;background:var(--primary)"></i></div>
+    <div class="msec">
+      <h2 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px">Rasmlar yuklanmoqda</h2>
+      <p style="font-size:15px;color:var(--muted);margin:0 0 22px;line-height:1.55">Sahifani yopmang.</p>
+      <div class="up-card">
+        <div class="up-row" style="padding:13px 14px;gap:12px">
+          <img class="plate" src="img/phones.jpg" style="width:48px;height:48px" alt="Uchta telefon">
+          <span class="up-nm"><span class="n" style="font-size:14px">pixel-9a-uchta.jpg</span><span class="s" style="font-size:12.5px">3,4 MB · tayyor</span></span>
+          <span class="ok">✓</span>
+        </div>
+        <div class="up-row" style="padding:13px 14px;gap:12px;align-items:flex-start">
+          <img class="plate" src="img/charger.jpg" style="width:48px;height:48px" alt="Quvvatlagich">
+          <span class="up-nm">
+            <span class="n" style="font-size:14px">quvvatlagich-20w.jpg</span>
+            <span class="s" style="font-size:12.5px">2,1 MB · 68%</span>
+            <span class="bar" style="width:100%;margin-top:7px"><i style="width:68%"></i></span>
+          </span>
+        </div>
+        <div class="up-row" style="padding:13px 14px;gap:12px">
+          <span class="skel" style="width:48px;height:48px;background:var(--stone-2)"></span>
+          <span class="up-nm"><span class="n" style="font-size:14px">narxlar.pdf</span>
+            <span class="s" style="font-size:12.5px;color:var(--primary);font-weight:600">Bu rasm emas</span></span>
+          <button class="btn btn-s btn-sm" style="height:36px;font-size:13px;padding:0 12px">Olib&nbsp;tashlash</button>
+        </div>
+        <div class="err" style="padding:13px 14px;font-size:13.5px">
+          <b>narxlar.pdf qabul qilinmadi.</b>JPG, PNG yoki WebP yuboring.
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 20px;background:var(--bg);
+                border-top:1px solid var(--border)">
+      <button class="btn btn-p" style="width:100%;opacity:.42">Davom etish</button>
+      <p style="font-size:13px;color:var(--muted);text-align:center;margin:10px 0 0">1 ta rasm tayyor, 1 tasi yuklanmoqda</p>
+    </div>
+  </div>
+ </div>
+</div>
+</body>

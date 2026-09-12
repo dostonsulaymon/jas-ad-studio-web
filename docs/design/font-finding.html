@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Manrope and the Uzbek oʻ / gʻ</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="board.css">
+<style>
+.F .ab{padding:44px 52px}
+.F .t{font-family:"Manrope",sans-serif}
+.F h2{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px}
+.F .k{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.F .big{font-size:62px;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin:0}
+.F .mid{font-size:22px;font-weight:500;line-height:1.5;margin:10px 0 0;color:var(--ink)}
+.F .case{padding:26px 0;border-bottom:1px solid var(--border)}
+.F .case:last-child{border-bottom:0}
+.F .verdict{font-size:14.5px;line-height:1.6;margin:14px 0 0;max-width:78ch;color:var(--muted)}
+.F .verdict b{color:var(--ink)}
+.F .bad{color:#7a2b1e;font-weight:700}
+.F .good{color:var(--primary);font-weight:700}
+.F table{border-collapse:collapse;font-size:14.5px;margin-top:8px}
+.F td,.F th{padding:9px 20px 9px 0;text-align:left;border-bottom:1px solid var(--border)}
+.F th{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.F code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--stone-1);padding:2px 6px;border-radius:6px}
+</style>
+<body class="F">
+<div class="board">
+  <div class="board-head">
+    <span class="tag">Finding</span>
+    <h1>Manrope cannot render standard Uzbek oʻ and gʻ</h1>
+    <p>The brief asked whether the display face handles the Uzbek modifier letters at hero size. It does not, and this is not cosmetic: the API already emits the character Manrope is missing, 657 times across the shot plans in <code>out/pack</code>. Rendered below in a real browser with the real webfont.</p>
+  </div>
+
+  <div class="ab" style="width:1440px">
+    <div class="case">
+      <p class="k">1 · Standard Uzbek Latin &nbsp;—&nbsp; U+02BB MODIFIER LETTER TURNED COMMA</p>
+      <p class="big t">Oʻzbekcha yoʻnalish, gʻoya</p>
+      <p class="mid t">Kadrlar rejasi: mahsulot aniq koʻrinadi, yorugʻlik sirt boʻylab yuradi.</p>
+      <p class="verdict"><span class="bad">Broken.</span> Manrope has no glyph at U+02BB. The browser silently substitutes a
+        fallback face for that one character, so the mark above changes weight, width and colour mid-word.
+        <b>This is the codepoint the API already writes</b> (657 times in the Uzbek shot plans, plus 14 of U+02BC).</p>
+    </div>
+
+    <div class="case">
+      <p class="k">2 · What the planning documents use &nbsp;—&nbsp; U+2018 LEFT SINGLE QUOTATION MARK</p>
+      <p class="big t">O‘zbekcha yo‘nalish, g‘oya</p>
+      <p class="mid t">Kadrlar rejasi: mahsulot aniq ko‘rinadi, yorug‘lik sirt bo‘ylab yuradi.</p>
+      <p class="verdict"><span class="good">Renders.</span> Manrope has this glyph, which is why the artboards use it.
+        But it is a <b>quotation mark, not a letter</b>: a browser may break a line after it, double-click word
+        selection stops at it, and search for "oʻzbek" will not match "o‘zbek". It is the pragmatic choice, not the correct one.</p>
+    </div>
+
+    <div class="case">
+      <p class="k">3 · ASCII fallback &nbsp;—&nbsp; U+0027 APOSTROPHE</p>
+      <p class="big t">O'zbekcha yo'nalish, g'oya</p>
+      <p class="verdict">Renders everywhere and is what sellers type on a phone keyboard. Reads as cheap at hero size,
+        and carries the same non-letter problems as case 2. Useful only as <b>input normalisation</b>: accept it from
+        the seller, store the canonical form.</p>
+    </div>
+
+    <div class="case">
+      <table>
+        <tr><th>Codepoint</th><th>In Manrope</th><th>Emitted by the API today</th><th>Used in the planning docs</th></tr>
+        <tr><td><code>U+02BB</code> ʻ turned comma</td><td class="bad">missing</td><td>657</td><td>0</td></tr>
+        <tr><td><code>U+02BC</code> ʼ modifier apostrophe</td><td class="bad">missing</td><td>14</td><td>0</td></tr>
+        <tr><td><code>U+2018</code> ‘ left single quote</td><td class="good">present</td><td>0</td><td>27</td></tr>
+        <tr><td><code>U+2019</code> ’ right single quote</td><td class="good">present</td><td>30</td><td>9</td></tr>
+      </table>
+      <p class="verdict" style="margin-top:18px">The api repo and the planning docs already disagree with each other, and
+        neither choice survives Manrope untouched. <b>This needs one decision before any text ships</b>, and it is a
+        contract-level decision, not a styling one: it changes what the API stores and what the web app searches.</p>
+    </div>
+  </div>
+</div>
+</body>

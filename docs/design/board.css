@@ -1,0 +1,109 @@
+/* JAS Ad Studio — static design artboards.
+   Palette is LOCKED by jas-ad-studio-web/CLAUDE.md. Nothing here invents a colour. */
+
+:root{
+  --bg:#F6F5F1;
+  --ink:#17211D;
+  --muted:#56625C;
+  --primary:#163D32;
+  --accent:#D9F36A;
+  --border:#DEDFD7;
+
+  /* tints derived only by mixing the locked colours with the locked background */
+  --stone-1:#EDECE6;
+  --stone-2:#E6E5DE;
+  --ink-08:rgba(23,33,29,.08);
+  --ink-14:rgba(23,33,29,.14);
+
+  --r-sm:12px;
+  --r-md:14px;
+  --r-lg:18px;
+
+  --f:"Manrope",-apple-system,"Segoe UI",system-ui,sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:#CFCEC7;
+  font-family:var(--f);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- the board chrome (not part of the design) ---------- */
+.board{padding:56px 56px 80px;max-width:2100px}
+.board-head{margin:0 0 44px;max-width:1440px}
+.board-head h1{font-size:40px;font-weight:800;letter-spacing:-.03em;margin:0 0 10px}
+.board-head p{font-size:17px;line-height:1.6;color:#2c3733;margin:0;max-width:74ch}
+.board-head .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:#4a5651;margin-bottom:14px}
+.row{display:flex;gap:48px;align-items:flex-start;margin-bottom:64px}
+.cap{font-size:13px;font-weight:700;color:#3a4643;margin:0 0 12px;letter-spacing:.01em}
+.cap span{font-weight:500;color:#5c6764}
+
+/* ---------- artboards ---------- */
+.ab{
+  background:var(--bg);
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 2px 4px rgba(23,33,29,.10),0 18px 44px rgba(23,33,29,.14);
+}
+.ab-d{width:1440px}
+.ab-m{width:390px}
+
+/* ---------- shared design primitives ---------- */
+.wm{max-width:1180px;margin:0 auto;padding:0 56px}
+
+.nav{height:72px;display:flex;align-items:center;gap:36px;border-bottom:1px solid var(--border)}
+.logo{font-weight:800;font-size:17px;letter-spacing:-.02em}
+.logo b{color:var(--primary)}
+.nav ul{list-style:none;display:flex;gap:28px;margin:0;padding:0;font-size:14.5px;
+  font-weight:500;color:var(--muted)}
+.nav .sp{flex:1}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:52px;padding:0 26px;border-radius:var(--r-md);border:0;
+  font-family:var(--f);font-size:16px;font-weight:700;letter-spacing:-.01em;
+  white-space:nowrap;cursor:pointer;
+}
+.btn-p{background:var(--primary);color:#fff}
+.btn-s{background:transparent;color:var(--ink);border:1px solid var(--border)}
+.btn-g{background:transparent;color:var(--primary);padding:0;height:auto;
+  text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1.5px}
+.btn-sm{height:44px;font-size:14.5px;padding:0 18px;border-radius:var(--r-sm)}
+
+.lbl{display:block;font-size:14px;font-weight:700;color:var(--ink);margin:0 0 7px}
+.help{font-size:13.5px;color:var(--muted);line-height:1.5;margin:7px 0 0}
+.inp{
+  width:100%;height:52px;padding:0 15px;font-family:var(--f);font-size:16px;color:var(--ink);
+  background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);
+  display:flex;align-items:center;
+}
+.inp.ta{height:auto;min-height:104px;padding:14px 15px;align-items:flex-start;line-height:1.55}
+.inp .ph{color:#8a948f}
+.inp.focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,61,50,.16)}
+
+.count{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* hand-drawn annotation device */
+.ann{position:absolute;pointer-events:none}
+.ann svg{display:block;overflow:visible}
+.ann-t{
+  font-family:"Caveat","Bradley Hand",cursive;font-size:22px;color:var(--primary);
+  line-height:1.15;white-space:nowrap;
+}
+.ann-t.sm{font-size:19px}
+
+/* photo plates */
+.plate{display:block;border-radius:var(--r-lg);object-fit:cover;background:var(--stone-1)}
+
+.hair{height:1px;background:var(--border);border:0;margin:0}
+
+.pill{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:999px;
+  border:1px solid var(--border);font-size:13.5px;font-weight:600;color:var(--muted);background:#fff}
+.pill.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.pill.cit{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+
+.mono{font-variant-numeric:tabular-nums}
