@@ -31,10 +31,22 @@ const OFFENDING = new RegExp(`[oOgG][${LOOKALIKES}]\\p{L}`, 'u');
 async function filesIn(dir: string): Promise<string[]> {
   try {
     const entries = await readdir(dir, { withFileTypes: true });
-    return entries.filter((e) => e.isFile() && /\.ts$/.test(e.name)).map((e) => join(dir, e.name));
+    return entries
+      .filter((e) => e.isFile() && /\.ts$/.test(e.name) && !/\.test\.ts$/.test(e.name))
+      .map((e) => join(dir, e.name));
   } catch {
     return [];
   }
+}
+
+/**
+ * Comments are English prose and are allowed their apostrophes. Skipping them is not a
+ * loophole: Uzbek copy is never in a comment, it is in a string literal. Without this
+ * the scan flagged "the api repo's `main`" in a doc comment, which is the same shape as
+ * `oʻ` to a regex.
+ */
+function isComment(line: string): boolean {
+  return /^\s*(\/\/|\/\*|\*)/.test(line);
 }
 
 test('the i18n catalogue writes Uzbek o/g with U+02BB, never a quotation mark', async () => {
@@ -44,6 +56,7 @@ test('the i18n catalogue writes Uzbek o/g with U+02BB, never a quotation mark', 
   for (const path of files) {
     const lines = (await readFile(path, 'utf8')).split('\n');
     lines.forEach((line, i) => {
+      if (isComment(line)) return;
       if (OFFENDING.test(line)) {
         offenders.push(`${path.slice(path.indexOf('/src/') + 1)}:${i + 1}  ${line.trim()}`);
       }
@@ -67,4 +80,8 @@ test('the guard actually catches a bad string, so a green run means something', 
   assert.equal(OFFENDING.test('yoʻnalish'), false, 'canonical text must pass');
   assert.equal(OFFENDING.test("title: 'JAS Ad Studio',"), false, 'a closing quote is not a mark');
   assert.equal(OFFENDING.test("import x from './logo'"), false, 'an import path is not Uzbek');
+
+  // The English possessive that the first version of this scan tripped on.
+  assert.equal(isComment(" * read out of the api repo's main branch"), true);
+  assert.equal(isComment("    message: 'Loyiha topilmadi.',"), false, 'copy is never skipped');
 });

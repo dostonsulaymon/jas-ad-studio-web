@@ -1,0 +1,386 @@
+/**
+ * Every visible string in the app (spec §8, D-014). Uzbek Latin is the only locale.
+ *
+ * Two rules this file exists to keep:
+ *
+ * 1. `oʻ` and `gʻ` are U+02BB, and `ʼ` is U+02BC. They are letters, not quotation
+ *    marks, and the API already writes them this way (W-001). `uzbek-source.test.ts`
+ *    fails the build if a quotation mark creeps in here.
+ * 2. The app never implies it makes videos. The main action is "Reklama promptini
+ *    tayyorlash", and the word "video" appears only next to Google Flow.
+ */
+
+export const uzLatn = {
+  brand: {
+    name: 'JAS Ad Studio',
+  },
+
+  nav: {
+    studio: 'Studiya',
+    examples: 'Misollar',
+    how: 'Qanday ishlaydi',
+    faq: 'Savollar',
+    signIn: 'Kirish',
+    signOut: 'Chiqish',
+    projects: 'Loyihalarim',
+    skipToContent: 'Asosiy qismga oʻtish',
+    menu: 'Menyu',
+  },
+
+  hero: {
+    // Source 01 §4, the owner's own words.
+    headlineLine1: 'Mahsulot rasmi bor.',
+    headlineLine2: 'Reklama gʻoyasi-chi?',
+    // The source's CTA was "3 ta bepul promptdan boshlash". There are no free prompts
+    // (D-007), so it is replaced rather than reworded.
+    sub: 'Rasmni yuklang. Mahsulotingizga mos ssenariy va tayyor prompt oling. Videoni Google Flowʼda tayyorlaysiz.',
+    subKeyword1: 'ssenariy',
+    subKeyword2: 'prompt',
+    primaryCta: 'Reklama promptini tayyorlash',
+    secondaryCta: 'Misollarni koʻrish',
+    // The hand-drawn annotation. The never-imply-video rule, drawn.
+    annotation: 'videoni Google Flow tayyorlaydi, biz emas',
+    trayDropTitle: 'Mahsulot rasmingizni',
+    trayDropTitle2: 'shu yerga tashlang',
+    trayDropShort: 'Rasmingiz shu yerga',
+    trayPhotoLimit: '4 tagacha rasm',
+  },
+
+  how: {
+    title: 'Qanday ishlaydi',
+    step1Title: '1. Rasm va qisqa tavsif',
+    step1Body: 'Mahsulotingizni bir necha qatorda tanishtirasiz.',
+    step2Title: '2. Reklama yoʻnalishi',
+    step2Body: 'Maqsad, format, platforma va oʻlcham.',
+    step3Title: '3. Ssenariy va prompt',
+    step3Body: 'Oʻzbekcha kadrlar rejasi, soʻng Google Flow uchun tayyor prompt.',
+  },
+
+  studio: {
+    stepProduct: 'Mahsulot',
+    stepDirection: 'Reklama yoʻnalishi',
+    stepReview: 'Tekshirish va saqlash',
+    stepOf: '/ 3',
+    draftSaved: 'Qoralama avtomatik saqlanadi',
+    yourProduct: 'Sizning mahsulotingiz',
+    nextSteps: 'Keyingi qadamlar',
+    view: 'Koʻrish',
+    continue: 'Davom etish',
+    back: 'Orqaga',
+    nextIsDirection: '2-qadam: reklama yoʻnalishi',
+    nextIsReview: '3-qadam: tekshirish va saqlash',
+    primaryBadge: 'Asosiy',
+    stepAnnounce: (n: number, name: string) => `${n}-qadam: ${name}`,
+  },
+
+  product: {
+    title: 'Mahsulotingizni tanishtiring',
+    sub: 'Rasm va ikki qator matn yetarli. Qolganini biz soʻraymiz.',
+    photosLabel: 'Mahsulot rasmi',
+    photosHelp: 'Birinchi rasm asosiy. Bosib boshqasini asosiy qilishingiz mumkin. 4 tagacha, har biri 10 MB gacha.',
+    photosHelpShort: '4 tagacha rasm, har biri 10 MB gacha. JPG, PNG yoki WebP.',
+    addPhoto: 'Rasm qoʻshish',
+    makePrimary: 'Asosiy qilish',
+    removePhoto: 'Rasmni olib tashlash',
+    nameLabel: 'Mahsulot nomi',
+    namePlaceholder: '',
+    descriptionLabel: 'Qisqa tavsif',
+    // The product-lock rule, said to the seller. The cheapest place to prevent an
+    // invented claim is before it is typed.
+    descriptionHelp: 'Faqat aniq narsani yozing. Oʻylab topilgan daʼvo promptga tushmaydi.',
+    guideTitle: 'Yaxshi natija uchun:',
+    guide1: 'mahsulot aniq koʻrinsin',
+    guide2: 'rasm juda xira boʻlmasin',
+    guide3: 'bir xil model va variant yuborilsin',
+    guide4: 'yorliq muhim boʻlsa, oʻqiladigan rasm qoʻshilsin',
+    annotationPinned: 'uch qadam davomida shu yerda turadi',
+  },
+
+  upload: {
+    title: 'Rasmlar yuklanmoqda',
+    sub: 'Sahifani yopmang. Tayyor boʻlganini pastda belgilab boramiz.',
+    queued: 'navbatda',
+    uploading: (percent: number) => `${percent}%`,
+    done: 'tayyor',
+    notAnImage: 'Bu rasm emas',
+    remove: 'Olib tashlash',
+    retry: 'Qaytadan urinish',
+    progressAnnounce: (name: string, percent: number) => `${name}: ${percent} foiz`,
+    doneAnnounce: (name: string) => `${name} yuklandi`,
+    summary: (ready: number, busy: number) =>
+      busy === 0 ? `${ready} ta rasm tayyor` : `${ready} ta rasm tayyor, ${busy} tasi yuklanmoqda`,
+    needNameFirst: 'Avval mahsulot nomini yozing, soʻng rasm yuklanadi.',
+  },
+
+  direction: {
+    title: 'Reklama yoʻnalishini tanlang',
+    sub: 'Bu savollarga javob bergach, ssenariy tayyorlanadi.',
+    goalLabel: 'Maqsad',
+    formatLabel: 'Reklama formati',
+    platformLabel: 'Platforma',
+    aspectLabel: 'Oʻlcham',
+    durationLabel: 'Davomiyligi',
+    durationUnit: 'soniya',
+    audienceLabel: 'Kimga moʻljallangan',
+    audienceHelp: 'Ixtiyoriy. Masalan: 25-40 yoshli, Toshkentda yashovchi xaridorlar.',
+    advanced: 'Qoʻshimcha sozlamalar',
+    claimsLabel: 'Tasdiqlangan afzalliklar',
+    claimsHelp: 'Faqat oʻzingiz bilgan, haqiqiy afzalliklarni yozing. 10 tagacha.',
+    claimVerified: 'Tasdiqlangan',
+    addClaim: 'Afzallik qoʻshish',
+    removeClaim: 'Afzallikni olib tashlash',
+    offerLabel: 'Aksiya yoki taklif',
+    offerHelp: 'Ixtiyoriy. Yozmasangiz, promptda hech qanday chegirma yoki narx boʻlmaydi.',
+    offerDescription: 'Taklif matni',
+    offerPrice: 'Narxi (soʻm)',
+    offerValidUntil: 'Qachongacha',
+    // Aspect ratio is never inferred from photo orientation (source 01 §9).
+    aspectHelp: 'Rasm shakliga qarab avtomatik tanlanmaydi. Oʻzingiz tanlang.',
+  },
+
+  // Seller-facing labels for the contract's enums. There is no endpoint listing these
+  // (W-003), so they live here, keyed by the enum value. The generated client's union
+  // types mean a contract change breaks the build rather than drifting silently.
+  goal: {
+    awareness: { label: 'Tanishtirish', line: 'Mahsulotni birinchi marta koʻrsatish' },
+    sales: { label: 'Sotuvni oshirish', line: 'Xaridorni harakatga undash' },
+    launch: { label: 'Yangi mahsulot eʼloni', line: 'Yangi kelgan mahsulotni eʼlon qilish' },
+    trust: { label: 'Ishonch uygʻotish', line: 'Sifat va kafolatni koʻrsatish' },
+  },
+
+  // D-065: format replaces style. The seller answers one question, not two, and there
+  // is no style picker anywhere.
+  format: {
+    'product-film': {
+      label: 'Studiya filmi',
+      line: 'Toza fon, sekin kamera, mahsulot markazda',
+    },
+    'high-energy': {
+      label: 'Tezkor va energiyali',
+      line: 'Qisqa kadrlar, tez ritm, ijtimoiy tarmoq uchun',
+    },
+    'lifestyle-story': {
+      label: 'Hayotiy hikoya',
+      line: 'Mahsulot kundalik vaziyatda koʻrsatiladi',
+    },
+    'ugc-authentic': {
+      label: 'Tabiiy UGC',
+      line: 'Telefonda olingandek, sodda va ishonarli',
+    },
+  },
+
+  platform: {
+    instagram: { label: 'Instagram / Reels', line: '' },
+    telegram: { label: 'Telegram', line: '' },
+    tiktok: { label: 'TikTok', line: '' },
+    'youtube-shorts': { label: 'YouTube Shorts', line: '' },
+  },
+
+  aspect: {
+    '9:16': { label: '9:16', line: 'Vertikal' },
+    '16:9': { label: '16:9', line: 'Gorizontal' },
+    '1:1': { label: '1:1', line: 'Kvadrat' },
+  },
+
+  review: {
+    title: 'Hammasini tekshiring',
+    sub: 'Notoʻgʻri joyini oʻzgartiring, soʻng loyihani saqlang.',
+    edit: 'Oʻzgartirish',
+    save: 'Saqlash',
+    saving: 'Saqlanmoqda',
+    saved: 'Loyiha saqlandi',
+    notSet: 'Koʻrsatilmagan',
+    // Generation is P4. The step is honest about what it does today rather than
+    // showing a primary action that never becomes available.
+    generationLater: 'Ssenariy va prompt tayyorlash keyingi bosqichda qoʻshiladi.',
+  },
+
+  projects: {
+    title: 'Loyihalarim',
+    close: 'Yopish',
+    count: (n: number) => `${n} ta loyiha`,
+    empty: 'Hozircha boʻsh',
+    emptyGhost: 'Birinchi loyihangiz shu yerda paydo boʻladi',
+    emptyBody:
+      'Mahsulot rasmini yuklab, qisqa tavsif yozsangiz, loyiha shu roʻyxatda saqlanadi. Keyin uni ochib promptni qayta nusxalashingiz, yoki tavsifni oʻzgartirib yangi versiya tayyorlashingiz mumkin.',
+    emptyCta: 'Birinchi loyihani boshlash',
+    // The gallery is free and needs no sign-in (D-007). It arrives in P6.
+    galleryNote: 'Misollar galereyasi bepul va kirishsiz ishlaydi.',
+    galleryLink: 'Misollarni koʻrish',
+    open: 'Ochish',
+    delete: 'Oʻchirish',
+    deleteConfirm: (name: string) => `"${name}" oʻchirilsinmi? Rasmlari ham oʻchadi.`,
+    deleteCancel: 'Bekor qilish',
+    deleteConfirmAction: 'Oʻchirish',
+    photoCount: (n: number) => `${n} ta rasm`,
+    annotationEmpty: 'boʻsh, lekin buzuq emas',
+  },
+
+  auth: {
+    signInTitle: 'Kirish kerak',
+    signInBody: 'Loyihani saqlash uchun Google orqali kiring. Yozganlaringiz saqlanib qoladi.',
+    signInWithGoogle: 'Google orqali kirish',
+    signedInAs: (email: string) => `Hisob: ${email}`,
+  },
+
+  /**
+   * messageKey -> message + recovery action. The API's convention is
+   * `errors.<code lowercased>`, so these keys are mechanical.
+   *
+   * Source 01 §47 forbids a bare "Something went wrong": every entry has an action.
+   */
+  errors: {
+    session_expired: {
+      message: 'Kirish muddati tugadi.',
+      action: 'Qaytadan kirish',
+      detail: 'Yozganlaringiz saqlanib turibdi.',
+    },
+    cross_origin_refused: {
+      message: 'Soʻrov qabul qilinmadi.',
+      action: 'Sahifani yangilash',
+      detail: '',
+    },
+    validation_failed: {
+      message: 'Maʼlumotlarda xatolik bor.',
+      action: 'Tekshirib chiqing',
+      detail: 'Belgilangan maydonni toʻgʻrilang.',
+    },
+    project_not_found: {
+      message: 'Loyiha topilmadi.',
+      action: 'Loyihalarimni ochish',
+      detail: '',
+    },
+    project_ownership: {
+      // Same message as project_not_found on purpose: never confirm that an id exists.
+      message: 'Loyiha topilmadi.',
+      action: 'Loyihalarimni ochish',
+      detail: '',
+    },
+    asset_not_found: {
+      message: 'Rasm topilmadi.',
+      action: 'Qaytadan yuklash',
+      detail: '',
+    },
+    too_many_photos: {
+      message: '4 tadan ortiq rasm yuklab boʻlmaydi.',
+      action: 'Bittasini olib tashlang',
+      detail: '',
+    },
+    upload_type: {
+      message: 'Bu rasm emas.',
+      action: 'Boshqa fayl tanlash',
+      detail: 'JPG, PNG yoki WebP yuboring.',
+    },
+    upload_too_large: {
+      message: 'Rasm juda katta.',
+      action: 'Boshqa rasm tanlash',
+      detail: '10 MB gacha rasm yuboring.',
+    },
+    upload_damaged: {
+      message: 'Rasm ochilmadi.',
+      action: 'Boshqa rasm tanlash',
+      detail: 'Fayl buzilgan boʻlishi mumkin.',
+    },
+    oauth_state_invalid: {
+      message: 'Kirish sahifasi eskirgan.',
+      action: 'Qaytadan kirish',
+      detail: '',
+    },
+    auth_provider_failed: {
+      message: 'Google javob bermadi.',
+      action: 'Qaytadan urinish',
+      detail: 'Bir ozdan soʻng urinib koʻring.',
+    },
+    google_config: {
+      message: 'Xizmat hozircha sozlanmagan.',
+      action: 'Keyinroq urinish',
+      detail: '',
+    },
+    config_missing: {
+      message: 'Xizmat hozircha sozlanmagan.',
+      action: 'Keyinroq urinish',
+      detail: '',
+    },
+    not_found: {
+      message: 'Topilmadi.',
+      action: 'Orqaga qaytish',
+      detail: '',
+    },
+    http_error: {
+      message: 'Kutilmagan xatolik.',
+      action: 'Qaytadan urinish',
+      detail: '',
+    },
+    internal_error: {
+      message: 'Kutilmagan xatolik.',
+      action: 'Qaytadan urinish',
+      detail: '',
+    },
+    network_offline: {
+      message: 'Internet aloqasi uzildi.',
+      action: 'Qaytadan urinish',
+      detail: 'Yozganlaringiz saqlanib turibdi.',
+    },
+
+    // Reachable only once P3 and P4 land. Present so the map is complete and the
+    // components are already wired; no screens are built for them yet.
+    no_credits: {
+      message: 'Prompt limiti tugadi.',
+      action: 'Limit toʻldirish',
+      detail: '',
+    },
+    order_pending: {
+      message: 'Toʻlovingiz tekshirilmoqda.',
+      action: 'Holatni koʻrish',
+      detail: '',
+    },
+    ai_timeout: {
+      message: 'Tayyorlash juda uzoq davom etdi.',
+      action: 'Qaytadan urinish',
+      detail: 'Limitingiz sarflanmadi.',
+    },
+    ai_refused: {
+      message: 'Bu mahsulot uchun ssenariy tayyorlanmadi.',
+      action: 'Tavsifni oʻzgartirish',
+      detail: '',
+    },
+    ai_malformed: {
+      message: 'Natija toʻliq kelmadi.',
+      action: 'Qaytadan urinish',
+      detail: 'Limitingiz sarflanmadi.',
+    },
+    ai_truncated: {
+      message: 'Natija yarmida uzilib qoldi.',
+      action: 'Qaytadan urinish',
+      detail: 'Limitingiz sarflanmadi.',
+    },
+    reference_conflict: {
+      message: 'Rasmlar bir xil mahsulotga oʻxshamadi.',
+      action: 'Rasmlarni tekshirish',
+      detail: 'Bir xil model va variant yuboring.',
+    },
+    rate_limited: {
+      message: 'Juda tez-tez soʻraldi.',
+      action: 'Bir ozdan soʻng urinish',
+      detail: '',
+    },
+    spend_cap_reached: {
+      message: 'Bugungi chegara tugadi.',
+      action: 'Ertaga urinish',
+      detail: '',
+    },
+  },
+
+  common: {
+    required: 'Majburiy',
+    optional: 'Ixtiyoriy',
+    characters: (used: number, max: number) => `${used} / ${max}`,
+    requestId: (id: string) => `Soʻrov raqami: ${id}`,
+    loading: 'Yuklanmoqda',
+    yes: 'Ha',
+    no: 'Yoʻq',
+  },
+} as const;
+
+export type Catalogue = typeof uzLatn;
+export type ErrorKey = keyof Catalogue['errors'];
