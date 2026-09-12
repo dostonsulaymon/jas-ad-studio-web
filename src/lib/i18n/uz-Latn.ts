@@ -620,6 +620,58 @@ export const uzLatn = {
     },
   },
 
+  /**
+   * The seller's own credit and order screens (D-007, D-008).
+   *
+   * No price is ever shown until the owner sets one: GET /api/packs returns packs whose
+   * priceUzs is null until then, and a pack without a price cannot be ordered. Inventing
+   * a number here would be exactly the fake pricing CLAUDE.md forbids.
+   */
+  credits: {
+    title: 'Prompt limiti',
+    balanceLabel: 'Mavjud promptlar',
+    reservedNote: (n: number) => `${n} tasi hozir band`,
+    empty: 'Prompt limiti tugagan.',
+    emptySub: 'Yangi prompt tayyorlash uchun paket tanlang.',
+    buy: 'Paket olish',
+    close: 'Yopish',
+    packsTitle: 'Paketlar',
+    // Shown when Jakhongir has not priced anything yet (D-082 is still open).
+    noPacks: 'Paketlar hali sozlanmagan.',
+    noPacksSub: 'Narxlar tayyor boʻlgach, shu yerda koʻrinadi. Hozircha buyurtma berib boʻlmaydi.',
+    packCredits: (n: number) => `${n} ta prompt`,
+    perPrompt: (uzs: string) => `1 ta prompt ${uzs}`,
+    choosePack: 'Tanlash',
+    chosen: 'Tanlandi',
+    methodLabel: 'Toʻlov usuli',
+    payerLabel: 'Toʻlovchi ismi yoki chek raqami',
+    payerHelp: 'Ixtiyoriy, lekin toʻlovni tezroq topishga yordam beradi.',
+    submit: 'Buyurtma berish',
+    submitting: 'Yuborilmoqda',
+    howToPay: 'Qanday toʻlanadi',
+    noPaymentInfo: 'Toʻlov maʼlumotlari hali kiritilmagan. Qoʻllab-quvvatlashga yozing.',
+    cardNumber: 'Karta raqami',
+    cardHolder: 'Karta egasi',
+    ordersTitle: 'Buyurtmalarim',
+    noOrders: 'Hozircha buyurtma yoʻq.',
+    cancel: 'Bekor qilish',
+    cancelling: 'Bekor qilinmoqda',
+    pendingNote: 'Toʻlov tekshirilgach, promptlar hisobingizga qoʻshiladi.',
+    status: {
+      pending: 'Kutilmoqda',
+      paid: 'Tasdiqlangan',
+      rejected: 'Rad etilgan',
+      cancelled: 'Bekor qilingan',
+    },
+    method: {
+      card_transfer: 'Karta orqali',
+      payme: 'Payme',
+      click: 'Click',
+      other: 'Boshqa',
+    },
+    support: 'Aloqa',
+  },
+
   common: {
     required: 'Majburiy',
     optional: 'Ixtiyoriy',

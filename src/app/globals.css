@@ -96,6 +96,27 @@ button {
   top: 12px;
 }
 
+/**
+ * An indeterminate bar for the generation wait. There is no percentage to report — the
+ * job takes about a minute and the API exposes no progress — so this says "working"
+ * without pretending to know how far along it is. The reduced-motion block below stops
+ * it, which is correct: the text beside it already carries the meaning.
+ */
+@keyframes jas-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+.indeterminate::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 25%;
+  border-radius: 999px;
+  background: var(--color-primary);
+  animation: jas-indeterminate 1.5s ease-in-out infinite;
+}
+
 ::selection {
   background: var(--color-accent);
   color: var(--color-ink);

@@ -3,10 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { SiteHeader } from './site-header';
 import { ProjectsDrawer } from './projects-drawer';
+import { CreditsDrawer } from './credits-drawer';
 import { Studio } from './studio/studio';
 import { api, isApiError } from '@/lib/api/client';
 import { t } from '@/lib/i18n';
 import type { CurrentUserDto, ProjectSummaryDto } from '@/lib/brief';
+import type { components } from '@/lib/api/generated/schema';
+
+type Balance = components['schemas']['CreditBalanceDto'];
 
 /**
  * The one client island: session state, the header's account control, the drawer, and
@@ -19,13 +23,25 @@ export function App({ hero, sections }: { hero: React.ReactNode; sections: React
   const [projects, setProjects] = useState<ProjectSummaryDto[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [projectsError, setProjectsError] = useState<unknown>(null);
+  const [creditsOpen, setCreditsOpen] = useState(false);
+  const [balance, setBalance] = useState<Balance | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     api
       .get<CurrentUserDto>('/api/me')
       .then((me) => {
-        if (!cancelled) setUser(me);
+        if (cancelled) return;
+        setUser(me);
+        // The balance is the seller's own, so it is only asked for once they exist.
+        api
+          .get<Balance>('/api/credits/balance')
+          .then((b) => {
+            if (!cancelled) setBalance(b);
+          })
+          .catch(() => {
+            // A missing balance must not block the page; the drawer reports it properly.
+          });
       })
       .catch((error: unknown) => {
         // A 401 here is the signed-out state, not a failure. Showing an error notice
@@ -74,6 +90,16 @@ export function App({ hero, sections }: { hero: React.ReactNode; sections: React
             <span aria-hidden className="h-5 w-24 animate-pulse rounded-full bg-stone-2" />
           ) : user ? (
             <>
+              {/* The balance is a button, not a badge: seeing zero and being unable to
+                  act on it is the worst version of this control. */}
+              <button
+                type="button"
+                onClick={() => setCreditsOpen(true)}
+                className="inline-flex h-11 items-center gap-2 rounded-sm border border-border bg-white px-3.5 text-[14.5px] font-semibold"
+              >
+                <span className="tabular-nums">{balance ? balance.available : '—'}</span>
+                <span className="font-normal text-muted">{t.credits.title}</span>
+              </button>
               <button
                 type="button"
                 onClick={openDrawer}
@@ -107,6 +133,12 @@ export function App({ hero, sections }: { hero: React.ReactNode; sections: React
         <Studio onSaved={() => loadProjects()} />
         {sections}
       </main>
+
+      <CreditsDrawer
+        open={creditsOpen}
+        onClose={() => setCreditsOpen(false)}
+        onBalance={setBalance}
+      />
 
       <ProjectsDrawer
         open={drawerOpen}

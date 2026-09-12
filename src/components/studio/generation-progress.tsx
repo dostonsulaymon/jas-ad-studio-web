@@ -11,8 +11,9 @@ import { isTerminal, type JobStatus } from '@/lib/generation';
  * first question and D-020 makes the answer always the same one: it came back. The only
  * state that spends a credit is `ready`, and `ready` is rendered elsewhere.
  *
- * Plain structure on purpose — the visual treatment belongs to the session that owns the
- * design direction.
+ * The waiting state carries an indeterminate bar rather than a percentage, because the
+ * API exposes no progress and a fake percentage is a lie a seller can catch. The bar
+ * stops under prefers-reduced-motion; the sentence beside it already says everything.
  */
 export function GenerationProgress({
   status,
@@ -41,21 +42,33 @@ export function GenerationProgress({
       // when a 60-second job finishes.
       role="status"
       aria-live="polite"
-      className="mt-7 rounded-md border border-border bg-primary/5 px-4 py-4"
+      className="mt-7 overflow-hidden rounded-md border border-border bg-primary/5"
     >
       {waiting ? (
         <>
-          <p className="text-[15.5px] font-bold">
-            {status === 'queued' ? t.generate.queuedTitle : t.generate.runningTitle}
-          </p>
-          <p className="mt-1 text-[14.5px] leading-relaxed text-muted">
-            {t.generate.runningNote}
-          </p>
+          <span
+            aria-hidden
+            className="indeterminate block h-[3px] w-full overflow-hidden bg-stone-2"
+          />
+          <div className="flex items-start gap-3 px-4 py-4">
+            <span
+              aria-hidden
+              className="mt-[7px] size-2.5 shrink-0 animate-pulse rounded-full bg-primary"
+            />
+            <div className="min-w-0">
+              <p className="text-[15.5px] font-bold">
+                {status === 'queued' ? t.generate.queuedTitle : t.generate.runningTitle}
+              </p>
+              <p className="mt-1 max-w-[52ch] text-[14.5px] leading-relaxed text-muted">
+                {t.generate.runningNote}
+              </p>
+            </div>
+          </div>
         </>
       ) : null}
 
       {status === 'needs_input' ? (
-        <>
+        <div className="px-4 py-4">
           <p className="text-[15.5px] font-bold">{t.generate.questionsTitle}</p>
           <p className="mt-1 text-[14.5px] leading-relaxed text-muted">
             {t.generate.questionsSub}
@@ -83,11 +96,11 @@ export function GenerationProgress({
               {t.review.edit}
             </button>
           ) : null}
-        </>
+        </div>
       ) : null}
 
       {status === 'refused' ? (
-        <>
+        <div className="px-4 py-4">
           <p className="text-[15.5px] font-bold">{t.generate.refusedTitle}</p>
           {/* The model's own Uzbek explanation. Never a provider message: the API sends
               messageUz for exactly this, and errorCode is null on a refusal. */}
@@ -104,11 +117,11 @@ export function GenerationProgress({
               {t.review.edit}
             </button>
           ) : null}
-        </>
+        </div>
       ) : null}
 
       {status === 'failed' ? (
-        <>
+        <div className="px-4 py-4">
           <p className="text-[15.5px] font-bold">{t.generate.failedTitle}</p>
           {/* Mapped copy for the §9 code, never the code itself. */}
           <p className="mt-1 text-[15px] leading-relaxed">
@@ -124,7 +137,7 @@ export function GenerationProgress({
               {t.generate.retry}
             </button>
           ) : null}
-        </>
+        </div>
       ) : null}
     </section>
   );
