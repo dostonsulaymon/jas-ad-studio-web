@@ -10,12 +10,25 @@ import { HERO_FILES_EVENT } from '../hero-tray';
 import { ErrorNotice } from '../error-notice';
 import { GenerationProgress } from './generation-progress';
 import { GenerationResult } from './result';
-import { emptyDraft, isStep1Complete, type Draft } from '@/lib/brief';
+import {
+  draftFromProject,
+  emptyDraft,
+  isStep1Complete,
+  type Draft,
+  type ProjectDetailDto,
+} from '@/lib/brief';
 import { isTerminal, type GenerationDetailDto, type JobStatus } from '@/lib/generation';
 import { t } from '@/lib/i18n';
 
 const STEPS = [t.studio.stepProduct, t.studio.stepDirection, t.studio.stepReview] as const;
 const DRAFT_KEY = 'jas.draft.v1';
+
+/**
+ * Reopening a saved project. The drawer fetches the detail and dispatches it here, the
+ * same way the hero tray hands over files: one channel, so there is no second copy of
+ * the studio's state living somewhere else.
+ */
+export const OPEN_PROJECT_EVENT = 'jas:open-project';
 
 /**
  * The direction's second structural idea: a two-pane workbench. Controls on the left,
@@ -42,6 +55,7 @@ export function Workbench({
   fromCache,
   onGenerate,
   onDismissResult,
+  onReopen,
 }: {
   photos: Photo[];
   uploads: UploadItem[];
@@ -59,6 +73,7 @@ export function Workbench({
   fromCache?: boolean;
   onGenerate?: (draft: Draft) => void;
   onDismissResult?: () => void;
+  onReopen?: (project: ProjectDetailDto) => void;
 }) {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -113,6 +128,20 @@ export function Workbench({
     window.addEventListener(HERO_FILES_EVENT, onHeroFiles);
     return () => window.removeEventListener(HERO_FILES_EVENT, onHeroFiles);
   }, [onAddFiles]);
+
+  useEffect(() => {
+    const onOpenProject = (event: Event) => {
+      const detail = (event as CustomEvent<ProjectDetailDto>).detail;
+      setDraft(draftFromProject(detail));
+      onReopen?.(detail);
+      setShowErrors(false);
+      setStep(1);
+      setReached(3);
+    };
+    window.addEventListener(OPEN_PROJECT_EVENT, onOpenProject);
+    return () => window.removeEventListener(OPEN_PROJECT_EVENT, onOpenProject);
+  }, [onReopen]);
+
 
   const go = useCallback((next: 1 | 2 | 3) => {
     setStep(next);

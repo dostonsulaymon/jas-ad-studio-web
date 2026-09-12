@@ -7,7 +7,8 @@ import { CreditsDrawer } from './credits-drawer';
 import { Studio } from './studio/studio';
 import { api, isApiError } from '@/lib/api/client';
 import { t } from '@/lib/i18n';
-import type { CurrentUserDto, ProjectSummaryDto } from '@/lib/brief';
+import type { CurrentUserDto, ProjectDetailDto, ProjectSummaryDto } from '@/lib/brief';
+import { OPEN_PROJECT_EVENT } from './studio/workbench';
 import type { components } from '@/lib/api/generated/schema';
 
 type Balance = components['schemas']['CreditBalanceDto'];
@@ -147,6 +148,18 @@ export function App({ hero, sections }: { hero: React.ReactNode; sections: React
         error={projectsError}
         onClose={() => setDrawerOpen(false)}
         onRetry={loadProjects}
+        onOpen={(project) => {
+          // The detail carries the brief, which the summary never did, so reopening can
+          // restore all 11 fields instead of blanking eight of them on the next save.
+          void api
+            .get<ProjectDetailDto>(`/api/projects/${project.id}`)
+            .then((detail) => {
+              setDrawerOpen(false);
+              window.dispatchEvent(new CustomEvent(OPEN_PROJECT_EVENT, { detail }));
+              document.getElementById('studiya-boshlash')?.scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(setProjectsError);
+        }}
         onDelete={async (project) => {
           // Soft-delete on the server also stops the photos serving (D-068), so the row
           // and its thumbnail go together.

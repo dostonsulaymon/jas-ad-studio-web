@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AdminOrders } from '@/components/admin/orders';
+import { AdminReports } from '@/components/admin/reports';
 import { AdminSettings } from '@/components/admin/settings';
 import { AdminGrants, AdminUsers } from '@/components/admin/users-and-grants';
 import { api } from '@/lib/api/client';
@@ -19,13 +20,14 @@ import type { CurrentUserDto } from '@/lib/brief';
  * every request returns 403.
  */
 
-type Tab = 'orders' | 'grants' | 'settings' | 'users';
+type Tab = 'orders' | 'grants' | 'settings' | 'users' | 'reports';
 
 const TABS: ReadonlyArray<{ id: Tab; label: string }> = [
   { id: 'orders', label: t.admin.tabOrders },
   { id: 'grants', label: t.admin.tabGrants },
   { id: 'settings', label: t.admin.tabSettings },
   { id: 'users', label: t.admin.tabUsers },
+  { id: 'reports', label: t.admin.tabReports },
 ];
 
 export default function AdminPage() {
@@ -125,6 +127,7 @@ export default function AdminPage() {
         {tab === 'grants' ? <AdminGrants /> : null}
         {tab === 'settings' ? <AdminSettings /> : null}
         {tab === 'users' ? <AdminUsers /> : null}
+        {tab === 'reports' ? <AdminReports /> : null}
       </main>
     </>
   );

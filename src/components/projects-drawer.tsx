@@ -23,6 +23,7 @@ export function ProjectsDrawer({
   onRetry,
   onStart,
   onDelete,
+  onOpen,
 }: {
   open: boolean;
   projects: ProjectSummaryDto[];
@@ -32,6 +33,7 @@ export function ProjectsDrawer({
   onRetry: () => void;
   onStart: () => void;
   onDelete: (project: ProjectSummaryDto) => Promise<void>;
+  onOpen: (project: ProjectSummaryDto) => void;
 }) {
   const [confirming, setConfirming] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -184,14 +186,23 @@ export function ProjectsDrawer({
                   </span>
 
                   {confirming !== project.id ? (
+                    <span className="flex shrink-0 flex-col gap-2 self-start">
+                    <button
+                      type="button"
+                      onClick={() => onOpen(project)}
+                      className="h-11 rounded-sm border border-border bg-white px-3 text-[13.5px] font-semibold"
+                    >
+                      {t.projects.open}
+                    </button>
                     <button
                       type="button"
                       onClick={() => setConfirming(project.id)}
                       aria-label={`${t.projects.delete}: ${project.name}`}
-                      className="h-11 shrink-0 self-start rounded-sm border border-border bg-white px-3 text-[13.5px] font-semibold"
+                      className="h-11 rounded-sm border border-border bg-white px-3 text-[13.5px] font-semibold"
                     >
                       {t.projects.delete}
                     </button>
+                    </span>
                   ) : null}
                 </li>
               ))}

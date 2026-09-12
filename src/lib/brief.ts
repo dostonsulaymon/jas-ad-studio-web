@@ -12,6 +12,7 @@ import { normalizeUzbek } from './uzbek.ts';
 
 export type BriefDto = components['schemas']['BriefDto'];
 export type ProjectSummaryDto = components['schemas']['ProjectSummaryDto'];
+export type ProjectDetailDto = components['schemas']['ProjectDetailDto'];
 export type StoredAssetDto = components['schemas']['StoredAssetDto'];
 export type CurrentUserDto = components['schemas']['CurrentUserDto'];
 
@@ -132,6 +133,36 @@ function toOffer(offer: Offer | null): BriefDto['offer'] {
     description,
     priceUzs: offer.priceUzs && offer.priceUzs > 0 ? Math.trunc(offer.priceUzs) : null,
     validUntil: offer.validUntil && offer.validUntil.length > 0 ? offer.validUntil : null,
+  };
+}
+
+/**
+ * Turn a saved project back into an editable draft.
+ *
+ * This is only possible because GET /api/projects/:id returns the brief as well as the
+ * summary. It used to return three of the eleven fields, so reopening and saving would
+ * have wiped audience, offer and confirmedClaims every time.
+ */
+export function draftFromProject(project: ProjectDetailDto): Draft {
+  const brief = project.brief;
+  return {
+    projectId: project.id,
+    productName: brief.productName,
+    description: brief.description,
+    goal: brief.goal,
+    formatId: brief.formatId,
+    platform: brief.platform,
+    aspectRatio: brief.aspectRatio,
+    durationSeconds: brief.durationSeconds ?? 10,
+    audience: brief.audience ?? '',
+    confirmedClaims: brief.confirmedClaims.map((c) => ({ claim: c.claim, verified: c.verified })),
+    offer: brief.offer
+      ? {
+          description: brief.offer.description,
+          priceUzs: brief.offer.priceUzs,
+          validUntil: brief.offer.validUntil,
+        }
+      : null,
   };
 }
 

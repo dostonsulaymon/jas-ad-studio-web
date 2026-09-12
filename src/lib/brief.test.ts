@@ -1,6 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { emptyDraft, isStep1Complete, missingRequired, toBriefDto, type Draft } from './brief.ts';
+import {
+  draftFromProject,
+  emptyDraft,
+  isStep1Complete,
+  missingRequired,
+  toBriefDto,
+  type Draft,
+} from './brief.ts';
 import { TURNED_COMMA } from './uzbek.ts';
 
 function filled(overrides: Partial<Draft> = {}): Draft {
@@ -113,4 +120,33 @@ test('missingRequired names exactly the fields that block step 1', () => {
   assert.deepEqual(missingRequired(filled()), []);
   assert.equal(isStep1Complete(filled()), true);
   assert.equal(isStep1Complete(emptyDraft()), false);
+});
+
+test('a saved project round-trips into a draft and back without losing a field', () => {
+  // The whole point of the brief read-back: reopen, edit, save, and the eight fields the
+  // summary never carried are still there.
+  const original = filled({
+    audience: 'Uy bekalari',
+    confirmedClaims: [{ claim: 'Original', verified: true }],
+    offer: { description: 'Yetkazib berish bepul', priceUzs: 50000, validUntil: '2026-10-01' },
+    goal: 'trust',
+    formatId: 'ugc-authentic',
+    platform: 'telegram',
+    aspectRatio: '1:1',
+    durationSeconds: 15,
+  });
+  const sent = toBriefDto(original);
+
+  const reopened = draftFromProject({
+    id: 'p-1',
+    name: sent.productName,
+    formatId: sent.formatId,
+    durationSeconds: sent.durationSeconds,
+    aspectRatio: sent.aspectRatio,
+    createdAt: '2026-09-12T10:42:33.741Z',
+    brief: sent,
+  });
+
+  assert.equal(reopened.projectId, 'p-1');
+  assert.deepEqual(toBriefDto(reopened), sent, 'a reopened draft must send exactly what was saved');
 });

@@ -1,8 +1,8 @@
 /**
  * GENERATED FILE. DO NOT EDIT BY HAND (D-031).
  *
- * Source: jas-ad-studio-api openapi.json @ main (956d354)
- * Paths:  26
+ * Source: jas-ad-studio-api openapi.json @ main (6ee04c3)
+ * Paths:  28
  *
  * Regenerate with `pnpm api:generate`. `pnpm api:check` fails if this drifted.
  */
@@ -187,6 +187,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/owner/generations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recent generations across all sellers, newest first. Read-only. */
+        get: operations["OwnerController_listGenerations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/owner/grants": {
         parameters: {
             query?: never;
@@ -306,6 +323,23 @@ export interface paths {
         patch: operations["OwnerController_setSupportContacts"];
         trace?: never;
     };
+    "/api/owner/spend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Daily AI spend in USD for the last 30 days. Read-only. */
+        get: operations["OwnerController_listSpend"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/owner/users": {
         parameters: {
             query?: never;
@@ -365,7 +399,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** One project. 404 if it is not the caller's, never 403. */
+        /** One project and the brief it was saved from. 404 if it is not the caller's, never 403. */
         get: operations["ProjectsController_get"];
         put?: never;
         post?: never;
@@ -634,6 +668,20 @@ export interface components {
             /** Format: uuid */
             userId: string;
         };
+        OwnerGenerationDto: {
+            /** Format: date-time */
+            createdAt: string;
+            estCostUsd: number | null;
+            /** Format: date-time */
+            finishedAt: string | null;
+            /** Format: uuid */
+            id: string;
+            model: string | null;
+            projectName: string | null;
+            status: string;
+            /** Format: email */
+            userEmail: string;
+        };
         OwnerOrderDto: {
             amountUzs: number;
             /** Format: date-time */
@@ -654,6 +702,12 @@ export interface components {
             userEmail: string;
             /** Format: uuid */
             userId: string;
+        };
+        OwnerSpendDayDto: {
+            day: string;
+            estCostUsd: number;
+            failed: number;
+            generations: number;
         };
         OwnerUserDto: {
             available: number;
@@ -688,6 +742,42 @@ export interface components {
              * @default null
              */
             paymeUrl: string | null;
+        };
+        ProjectDetailDto: {
+            aspectRatio: string;
+            brief: {
+                /** @enum {string} */
+                aspectRatio: "9:16" | "16:9" | "1:1";
+                audience: string | null;
+                confirmedClaims: {
+                    claim: string;
+                    verified: boolean;
+                }[];
+                description: string;
+                /** @default 10 */
+                durationSeconds: number;
+                /** @enum {string} */
+                formatId: "product-film" | "high-energy" | "lifestyle-story" | "ugc-authentic";
+                galleryInspirationId: string | null;
+                /** @enum {string} */
+                goal: "awareness" | "sales" | "launch" | "trust";
+                offer: {
+                    description: string;
+                    priceUzs: number | null;
+                    /** Format: date */
+                    validUntil: string | null;
+                } | null;
+                /** @enum {string} */
+                platform: "instagram" | "telegram" | "tiktok" | "youtube-shorts";
+                productName: string;
+            };
+            /** Format: date-time */
+            createdAt: string;
+            durationSeconds: number;
+            formatId: string;
+            /** Format: uuid */
+            id: string;
+            name: string;
         };
         ProjectSummaryDto: {
             aspectRatio: string;
@@ -976,6 +1066,25 @@ export interface operations {
             };
         };
     };
+    OwnerController_listGenerations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerGenerationDto"][];
+                };
+            };
+        };
+    };
     OwnerController_grant: {
         parameters: {
             query?: never;
@@ -1137,6 +1246,25 @@ export interface operations {
             };
         };
     };
+    OwnerController_listSpend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerSpendDayDto"][];
+                };
+            };
+        };
+    };
     OwnerController_listUsers: {
         parameters: {
             query?: never;
@@ -1233,7 +1361,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProjectSummaryDto"];
+                    "application/json": components["schemas"]["ProjectDetailDto"];
                 };
             };
         };

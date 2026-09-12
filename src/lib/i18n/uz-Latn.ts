@@ -527,6 +527,7 @@ export const uzLatn = {
     tabGrants: 'Limit berish',
     tabSettings: 'Sozlamalar',
     tabUsers: 'Foydalanuvchilar',
+    tabReports: 'Hisobot',
 
     deniedTitle: 'Bu sahifa faqat egasi uchun',
     deniedBody: 'Hisobingizda bu sahifani ochish huquqi yoʻq.',
@@ -604,6 +605,37 @@ export const uzLatn = {
       save: 'Saqlash',
       saving: 'Saqlanmoqda',
       saved: 'Saqlandi',
+    },
+
+    reports: {
+      title: 'Hisobot',
+      sub: 'Faqat oʻqish uchun.',
+      spendTitle: 'Kunlik xarajat',
+      // Cost in USD, never credits: conflating them would be a number the owner acts on
+      // and gets wrong.
+      spendSub: 'AI chaqiruvlari uchun haqiqiy xarajat, dollarda. Bu prompt limiti emas.',
+      day: 'Kun',
+      count: 'Tayyorlangan',
+      failed: 'Xato',
+      cost: 'Xarajat',
+      total30: 'Soʻnggi 30 kun',
+      generationsTitle: 'Tayyorlangan promptlar',
+      noGenerations: 'Hozircha hech narsa tayyorlanmagan.',
+      noSpend: 'Hozircha xarajat yoʻq.',
+      user: 'Foydalanuvchi',
+      project: 'Loyiha',
+      model: 'Model',
+      when: 'Vaqt',
+      statusHeader: 'Holat',
+      noProject: 'Oʻchirilgan loyiha',
+      status: {
+        queued: 'Navbatda',
+        running: 'Tayyorlanmoqda',
+        ready: 'Tayyor',
+        needs_input: 'Savol bor',
+        refused: 'Rad etildi',
+        failed: 'Xato',
+      },
     },
 
     users: {

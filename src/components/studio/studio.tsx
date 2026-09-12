@@ -317,6 +317,27 @@ export function Studio({ onSaved }: { onSaved?: (project: ProjectSummaryDto) => 
         setGeneration(null);
         setJobStatus(null);
       }}
+      onReopen={(project) => {
+        // Adopt the project so a later save PATCHes it instead of creating a duplicate,
+        // and load its photos so the pinned pane is not empty.
+        projectId.current = project.id;
+        storeProjectId(project.id);
+        setUploads([]);
+        setSaved(false);
+        setError(null);
+        void api
+          .get<StoredAssetDto[]>(`/api/projects/${project.id}/assets`)
+          .then((assets) =>
+            setPhotos(
+              assets.map((a, i) => ({
+                id: a.id,
+                url: referenceUrl(a.id),
+                isPrimary: a.isPrimary || i === 0,
+              })),
+            ),
+          )
+          .catch(setError);
+      }}
       onRetry={() => {
         setError(null);
         // A failed generation retries the generation, not the save: the seller pressed
