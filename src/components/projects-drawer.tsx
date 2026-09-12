@@ -22,6 +22,7 @@ export function ProjectsDrawer({
   onClose,
   onRetry,
   onStart,
+  onDelete,
 }: {
   open: boolean;
   projects: ProjectSummaryDto[];
@@ -30,7 +31,10 @@ export function ProjectsDrawer({
   onClose: () => void;
   onRetry: () => void;
   onStart: () => void;
+  onDelete: (project: ProjectSummaryDto) => Promise<void>;
 }) {
+  const [confirming, setConfirming] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const panel = useRef<HTMLDivElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const returnTo = useRef<Element | null>(null);
@@ -132,7 +136,7 @@ export function ProjectsDrawer({
               {projects.map((project) => (
                 <li
                   key={project.id}
-                  className="flex items-center gap-4 rounded-md border border-border bg-white p-4"
+                  className="flex items-start gap-4 rounded-md border border-border bg-white p-4"
                 >
                   <ProjectThumb projectId={project.id} />
                   <span className="min-w-0 flex-1">
@@ -144,7 +148,51 @@ export function ProjectsDrawer({
                       {' · '}
                       {formatDate(project.createdAt)}
                     </span>
+
+                    {/* Confirmation names the project, and sits in the row rather than in
+                        a window.confirm: a browser dialog cannot be styled, cannot be
+                        translated, and blocks the page. */}
+                    {confirming === project.id ? (
+                      <span className="mt-3 block rounded-sm border border-border bg-primary/5 p-3">
+                        <span className="block text-[13.5px] leading-snug">
+                          {t.projects.deleteConfirm(project.name)}
+                        </span>
+                        <span className="mt-2.5 flex gap-2">
+                          <button
+                            type="button"
+                            disabled={deleting === project.id}
+                            onClick={async () => {
+                              setDeleting(project.id);
+                              await onDelete(project);
+                              setDeleting(null);
+                              setConfirming(null);
+                            }}
+                            className="h-11 rounded-sm bg-primary px-4 text-[13.5px] font-bold text-white disabled:opacity-50"
+                          >
+                            {t.projects.deleteConfirmAction}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirming(null)}
+                            className="h-11 rounded-sm border border-border bg-white px-4 text-[13.5px] font-semibold"
+                          >
+                            {t.projects.deleteCancel}
+                          </button>
+                        </span>
+                      </span>
+                    ) : null}
                   </span>
+
+                  {confirming !== project.id ? (
+                    <button
+                      type="button"
+                      onClick={() => setConfirming(project.id)}
+                      aria-label={`${t.projects.delete}: ${project.name}`}
+                      className="h-11 shrink-0 self-start rounded-sm border border-border bg-white px-3 text-[13.5px] font-semibold"
+                    >
+                      {t.projects.delete}
+                    </button>
+                  ) : null}
                 </li>
               ))}
             </ul>

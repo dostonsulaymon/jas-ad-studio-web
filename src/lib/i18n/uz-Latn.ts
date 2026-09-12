@@ -432,6 +432,112 @@ export const uzLatn = {
     },
   },
 
+  /**
+   * The owner panel (D-037). Owner-only, and the role check in the UI only hides
+   * things: every one of these screens calls /api/owner/*, which the API guards with
+   * SessionGuard + OwnerGuard. The client is never the gate.
+   */
+  admin: {
+    title: 'Egasi paneli',
+    badge: 'Egasi',
+    backToStudio: 'Studiyaga qaytish',
+    tabOrders: 'Buyurtmalar',
+    tabGrants: 'Limit berish',
+    tabSettings: 'Sozlamalar',
+    tabUsers: 'Foydalanuvchilar',
+
+    deniedTitle: 'Bu sahifa faqat egasi uchun',
+    deniedBody: 'Hisobingizda bu sahifani ochish huquqi yoʻq.',
+    deniedAction: 'Studiyaga qaytish',
+
+    orders: {
+      title: 'Buyurtmalar',
+      filterPending: 'Kutilmoqda',
+      filterPaid: 'Tasdiqlangan',
+      filterRejected: 'Rad etilgan',
+      filterCancelled: 'Bekor qilingan',
+      empty: 'Bu holatda buyurtma yoʻq.',
+      emptyHint: 'Yangi buyurtmalar shu yerda paydo boʻladi.',
+      credits: (n: number) => `${n} ta prompt`,
+      confirm: 'Tasdiqlash',
+      reject: 'Rad etish',
+      confirming: 'Tasdiqlanmoqda',
+      rejectReason: 'Rad etish sababi',
+      rejectReasonHelp: 'Sotuvchi bu matnni koʻradi. Aniq yozing.',
+      rejectSubmit: 'Rad etishni tasdiqlash',
+      cancel: 'Bekor qilish',
+      // Confirming an order moves real credits, so it is never a single stray click.
+      confirmWarn: (credits: number, email: string) =>
+        `${email} hisobiga ${credits} ta prompt qoʻshiladi. Bu amal qaytarilmaydi.`,
+      payer: 'Toʻlovchi',
+      noPayer: 'Koʻrsatilmagan',
+      method: {
+        card_transfer: 'Karta orqali',
+        payme: 'Payme',
+        click: 'Click',
+        other: 'Boshqa',
+      },
+      status: {
+        pending: 'Kutilmoqda',
+        paid: 'Tasdiqlangan',
+        rejected: 'Rad etilgan',
+        cancelled: 'Bekor qilingan',
+      },
+    },
+
+    grants: {
+      title: 'Limit berish',
+      sub: 'Sotuvchiga qoʻlda prompt limiti qoʻshish. Har bir amal yozib boriladi.',
+      user: 'Foydalanuvchi',
+      userHelp: 'Roʻyxatdan tanlang.',
+      credits: 'Nechta prompt',
+      note: 'Izoh',
+      noteHelp: 'Nima uchun berilgani. Majburiy.',
+      submit: 'Limitni qoʻshish',
+      submitting: 'Qoʻshilmoqda',
+      done: (credits: number, email: string) => `${email} hisobiga ${credits} ta prompt qoʻshildi.`,
+    },
+
+    settings: {
+      title: 'Sozlamalar',
+      payment: 'Toʻlov maʼlumotlari',
+      paymentSub: 'Sotuvchilar toʻlov sahifasida shuni koʻradi.',
+      cardNumber: 'Karta raqami',
+      cardHolder: 'Karta egasi',
+      paymeUrl: 'Payme havolasi',
+      clickUrl: 'Click havolasi',
+      instructions: 'Qoʻshimcha koʻrsatma',
+      support: 'Aloqa',
+      supportSub: 'Muammo boʻlganda sotuvchi shu yerga yozadi.',
+      telegramUser: 'Telegram foydalanuvchi',
+      telegramBot: 'Telegram bot',
+      email: 'Email',
+      packs: 'Paketlar va narxlar',
+      // No prices are shown to sellers until the owner sets real ones (D-007 rules).
+      packsSub: 'Narx qoʻyilmaguncha sotuvchilarga hech qanday narx koʻrsatilmaydi.',
+      packCredits: (n: number) => `${n} ta prompt`,
+      packPrice: 'Narxi (soʻm)',
+      packActive: 'Faol',
+      packNoPrice: 'Narx qoʻyilmagan',
+      save: 'Saqlash',
+      saving: 'Saqlanmoqda',
+      saved: 'Saqlandi',
+    },
+
+    users: {
+      title: 'Foydalanuvchilar',
+      sub: 'Faqat oʻqish uchun.',
+      email: 'Email',
+      role: 'Rol',
+      available: 'Mavjud',
+      reserved: 'Band',
+      joined: 'Qoʻshilgan',
+      roleOwner: 'Egasi',
+      roleSeller: 'Sotuvchi',
+      empty: 'Hozircha foydalanuvchi yoʻq.',
+    },
+  },
+
   common: {
     required: 'Majburiy',
     optional: 'Ixtiyoriy',

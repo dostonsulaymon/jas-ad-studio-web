@@ -115,6 +115,16 @@ export function App({ hero, sections }: { hero: React.ReactNode; sections: React
         error={projectsError}
         onClose={() => setDrawerOpen(false)}
         onRetry={loadProjects}
+        onDelete={async (project) => {
+          // Soft-delete on the server also stops the photos serving (D-068), so the row
+          // and its thumbnail go together.
+          try {
+            await api.delete(`/api/projects/${project.id}`);
+            setProjects((list) => list.filter((p) => p.id !== project.id));
+          } catch (failed) {
+            setProjectsError(failed);
+          }
+        }}
         onStart={() => {
           setDrawerOpen(false);
           document.getElementById('studiya-boshlash')?.scrollIntoView({ behavior: 'smooth' });

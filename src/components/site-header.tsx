@@ -12,7 +12,9 @@ export function SiteHeader({ right }: { right?: React.ReactNode }) {
           href="#asosiy"
           className="inline-flex h-11 items-center text-[17px] font-extrabold tracking-[-0.02em] whitespace-nowrap"
         >
-          JAS <span className="text-primary">Ad Studio</span>
+          <span>
+            JAS <span className="text-primary">Ad Studio</span>
+          </span>
         </a>
 
         <nav aria-label={t.nav.menu} className="hidden lg:block">
