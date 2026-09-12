@@ -56,6 +56,25 @@ export const uzLatn = {
     step3Body: 'Oʻzbekcha kadrlar rejasi, soʻng Google Flow uchun tayyor prompt.',
   },
 
+  // Source 01 §41, minus its "3 ta bepul prompt" question: there are no free prompts
+  // (D-007), so that answer would be a lie rather than a rewording.
+  faq: {
+    title: 'Savollar',
+    q1: 'JAS Ad Studio videoni oʻzi tayyorlaydimi?',
+    a1: 'Yoʻq. Biz reklama gʻoyasi, oʻzbekcha kadrlar rejasi va tayyor promptni beramiz. Videoni siz Google Flowʼda tayyorlaysiz.',
+    q2: 'Google Flow bepulmi?',
+    a2: 'Bu sizning Google hisobingiz, mamlakatingiz va Googleʼning joriy shartlariga bogʻliq. JAS Ad Studio Google limitlariga tegmaydi.',
+    q3: 'Mahsulotim oʻzgarib ketmaydimi?',
+    a3: 'Prompt mahsulotni rasmdagidek saqlashni qatʼiy talab qiladi. Shunga qaramay, hech bir video model natijani 100 foiz kafolatlay olmaydi, shuning uchun natijani koʻzdan kechiring.',
+    q4: 'Promptni boshqa AI video servisida ishlatsam boʻladimi?',
+    a4: 'Prompt Google Flow uchun moslangan. Boshqa servisda ishlatish mumkin, lekin biroz oʻzgartirish kerak boʻlishi ehtimol.',
+  },
+
+  footer: {
+    madeFor: 'Oʻzbekistondagi onlayn sotuvchilar uchun',
+    notVideo: 'JAS Ad Studio reklama promptini tayyorlaydi. Videoni Google Flow tayyorlaydi.',
+  },
+
   studio: {
     stepProduct: 'Mahsulot',
     stepDirection: 'Reklama yoʻnalishi',

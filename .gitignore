@@ -38,3 +38,10 @@ next-env.d.ts
 # Design artboard photos. The sources are the owner's and live only in the api
 # repo's git-ignored out/pack; docs/design/prepare-photos.py regenerates these.
 docs/design/img/
+
+# Sample product photos, same provenance as docs/design/img.
+public/namunalar/
+
+# Playwright
+/test-results
+/playwright-report

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Caveat, Inter } from 'next/font/google';
 import './globals.css';
 
 /**
@@ -20,6 +20,18 @@ const inter = Inter({
   display: 'swap',
 });
 
+/**
+ * The hand-drawn annotation device from the artboards. Used for exactly one note per
+ * screen, never for interface text: it marks up the page the way someone would with a
+ * pen, and a second use would turn a device into decoration.
+ */
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  variable: '--font-caveat',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'JAS Ad Studio',
   description:
@@ -29,7 +41,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // uz-Latn is the only locale at launch (D-014).
   return (
-    <html lang="uz-Latn" className={inter.variable}>
+    <html lang="uz-Latn" className={`${inter.variable} ${caveat.variable}`}>
       <body>{children}</body>
     </html>
   );
