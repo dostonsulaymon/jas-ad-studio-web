@@ -12,7 +12,11 @@ The Next.js frontend of **JAS Ad Studio**: the one-page studio. It has a hero, t
 
 ## Status
 
-**Planning. There is no code yet.** Nothing gets built before its phase plan in `../jas-ad-studio-api/docs/superpowers/plans/` is approved.
+**P5 closed, 2026-09-12 (D-086).** The studio is built: hero and tray, the three-step wizard, photo upload, the projects drawer, the generation result, the credit and order screens, and the `/admin` owner panel. The whole path has been walked by hand against a running stack, not only asserted in tests.
+
+**P6 (the gallery) is next and has no plan yet.** Nothing new gets built before its phase plan in `../jas-ad-studio-api/docs/superpowers/plans/` is approved.
+
+Two things still block the product, and neither is web work: **D-082**, nothing is priced and a real generation costs about 4,414 soʻm against the 1,100 the pricing assumed, and the gallery itself.
 
 ## How work proceeds
 
@@ -59,7 +63,29 @@ queued for ever and looks identical to a slow one.
 
 ## Commands
 
-None yet. Phase 0 adds them.
+`nvm use` first. Node is pinned to 24.19.0 in `.nvmrc`.
+
+| | |
+|---|---|
+| `pnpm dev` | the app on **3042**. Rewrites `/api/*` to the NestJS port (D-032), so the api must be up on 3040 |
+| `pnpm build` / `pnpm start` | production build, served on **3043** |
+| `pnpm lint` `typecheck` `test` | the checks. `test` is `node --test` with native type stripping: no test-runner dependency |
+| `pnpm test:e2e` | Playwright at 1440, 390 and **360** — 360 is the floor that must not break |
+| `pnpm api:generate` | regenerate the typed client from the api repo's **`main`** (D-031, W-002) |
+| `pnpm api:check` | fails if the committed client drifted from `main` |
+
+Three gotchas, each learned the hard way:
+
+- **`pnpm api:generate` reads `main`, never the api repo's working tree.** An unmerged
+  branch's shapes are not ours to compile against. `--from-worktree` exists for local
+  testing and its output must never be committed.
+- **The api needs `WEB_ORIGIN=http://localhost:3042`.** Its schema default used to be its
+  own port, which made the CSRF guard refuse every write while reads kept working, so the
+  app looked healthy and silently saved nothing. Fixed in the api's schema, but check the
+  api's `.env` if writes start returning `CROSS_ORIGIN_REFUSED`.
+- **Uzbek `oʻ` and `gʻ` are U+02BB, and `ʼ` is U+02BC.** They are letters, not quotation
+  marks. `src/lib/uzbek-source.test.ts` fails the build if a quotation mark reaches the
+  i18n catalogue, and the face is Inter because Manrope has neither glyph (W-001).
 
 <!-- BEGIN:nextjs-agent-rules -->
 

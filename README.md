@@ -2,11 +2,13 @@
 
 The Next.js frontend for **JAS Ad Studio**: the one-page studio where Uzbek sellers upload a product photo, get a ready video prompt for Google Flow, and browse the example gallery.
 
-**Status: P5's studio is built (2026-09-12).** The hero and tray, the three-step wizard, photo uploads, the projects drawer, the `/admin` owner panel, and the generation flow — generate, poll, the inline result, copy-with-fallback, TXT export and the Google Flow handoff.
+**Status: P5 closed (2026-09-12, D-086).** The hero and tray, the three-step wizard, photo upload, the projects drawer with reopen and delete, the generation flow (generate, poll, the inline result, copy-with-fallback, TXT export, the Google Flow handoff), the seller's credit and order screens, and the `/admin` owner panel including generations and daily spend.
 
-Two things are outstanding, and neither is blocked by the API: a visual pass on the two generation panels, and an end-to-end test of the signed-in flow, which needs a sign-in fixture. See `HANDOFF-P5-generation.md`.
+The whole path has been walked by hand against a running stack: sign in, upload, brief, spend a credit, get the prompt back. That found three defects in the api repo and five in this one, all fixed.
 
-The credits and order screens are not built, and cannot be finished yet: `GET /api/packs` returns an empty list until an owner prices a pack, and the price itself is an open question — see **Q-17** and **D-082** in the api repo.
+**The credit screens are built but nothing can be bought yet.** `GET /api/packs` returns packs with no price until an owner sets one, and the app never invents a number — see **D-082** in the api repo, which also notes that a real generation costs about 4,414 soʻm against the 1,100 the pricing assumed.
+
+**P6, the example gallery, is next** and has no plan yet.
 
 The backend and all planning docs live in `../jas-ad-studio-api`. Start with its `README.md` and `CLAUDE.md`.
 
