@@ -18,14 +18,25 @@ The Next.js frontend of **JAS Ad Studio**: the one-page studio. It has a hero, t
 
 The same protocol as the api repo: one question at a time, a plan before code, one part at a time, and a stop for review after each part. Record decisions in `../jas-ad-studio-api/DECISIONS.md`.
 
-## Stack (proposed)
+## Stack (built)
 
 | | |
 |---|---|
 | Framework | Next.js 16, App Router, React 19, TypeScript |
 | Styling | Tailwind v4 via `@tailwindcss/postcss`, the same as kitobnarx-web (D-035) |
-| API client | Generated from `../jas-ad-studio-api/openapi.json` with one command. Never hand-write API types (D-031) |
-| Tests | Playwright for flows at 390 px and desktop |
+| API client | Generated from `../jas-ad-studio-api/openapi.json` by `pnpm api:generate`. **Never hand-write API types** (D-031); `pnpm api:check` fails on drift |
+| Unit tests | `node --test` over `src/**/*.test.ts` |
+| Browser tests | Playwright at **360, 390 and 1440** — 360 is the usability floor and gets its own project |
+
+**Everything reaches the API through `src/lib/api/client.ts`.** It is the only place that
+calls `fetch`, because it carries what the API requires of every caller: same-origin
+`/api`, credentials for the httpOnly session cookie, `X-Requested-With` on every write
+(the CSRF guard refuses without it), and `Idempotency-Key` where a route needs one. A
+component that calls `fetch` directly will work in development and fail in ways that look
+like the backend's fault.
+
+**The api must be running, including its worker.** A generation with no worker stays
+queued for ever and looks identical to a slow one.
 
 ## Design direction (source 01 §5, §38–§40)
 

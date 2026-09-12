@@ -8,7 +8,10 @@ import type { Photo } from './photo-rail';
 import type { UploadItem } from './upload-list';
 import { HERO_FILES_EVENT } from '../hero-tray';
 import { ErrorNotice } from '../error-notice';
+import { GenerationProgress } from './generation-progress';
+import { GenerationResult } from './result';
 import { emptyDraft, isStep1Complete, type Draft } from '@/lib/brief';
+import { isTerminal, type GenerationDetailDto, type JobStatus } from '@/lib/generation';
 import { t } from '@/lib/i18n';
 
 const STEPS = [t.studio.stepProduct, t.studio.stepDirection, t.studio.stepReview] as const;
@@ -34,6 +37,11 @@ export function Workbench({
   onRemoveUpload,
   onSave,
   onRetry,
+  generation,
+  jobStatus,
+  fromCache,
+  onGenerate,
+  onDismissResult,
 }: {
   photos: Photo[];
   uploads: UploadItem[];
@@ -46,6 +54,11 @@ export function Workbench({
   onRemoveUpload: (id: string) => void;
   onSave: (draft: Draft) => void;
   onRetry: () => void;
+  generation?: GenerationDetailDto | null;
+  jobStatus?: JobStatus | null;
+  fromCache?: boolean;
+  onGenerate?: (draft: Draft) => void;
+  onDismissResult?: () => void;
 }) {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -125,6 +138,22 @@ export function Workbench({
         description: draft.description.trim() ? undefined : t.common.required,
       }
     : {};
+
+  /**
+   * Bring the generation status into view when a job starts.
+   *
+   * Without this the only feedback for pressing "Prompt tayyorlash" is a status panel
+   * below the fold, so on a 1440x740 screen the button greys out and nothing else
+   * appears to happen for a minute.
+   */
+  const progressRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!jobStatus || isTerminal(jobStatus)) return;
+    progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [jobStatus]);
+
+  /** Once the package exists, the brief has been submitted and saving again is noise. */
+  const hasResult = generation?.status === 'ready' && Boolean(generation.package);
 
   const busy = uploads.some((u) => u.state.status === 'uploading' || u.state.status === 'queued');
   const primary = photos.find((p) => p.isPrimary) ?? photos[0];
@@ -212,7 +241,39 @@ export function Workbench({
             {step === 2 ? <StepDirection draft={draft} onChange={change} /> : null}
 
             {step === 3 ? (
-              <StepReview draft={draft} photoCount={photos.length} onEdit={go} />
+              <>
+                {/* The result replaces the review rather than sitting under it: once a
+                    package exists it is what the seller came for, and a form they have
+                    already submitted competing with it is noise. */}
+                {generation?.status === 'ready' && generation.package ? (
+                  <GenerationResult pkg={generation.package} productName={draft.productName} />
+                ) : (
+                  <StepReview
+                    draft={draft}
+                    photoCount={photos.length}
+                    onEdit={go}
+                    onGenerate={onGenerate ? () => onGenerate(draft) : undefined}
+                    generating={jobStatus !== null && jobStatus !== undefined && !isTerminal(jobStatus)}
+                  />
+                )}
+
+                {generation ?? jobStatus ? (
+                  <div ref={progressRef}>
+                  <GenerationProgress
+                    status={generation?.status ?? jobStatus ?? null}
+                    questionsUz={generation?.questionsUz ?? []}
+                    messageUz={generation?.messageUz ?? null}
+                    errorCode={generation?.errorCode ?? null}
+                    fromCache={fromCache === true}
+                    onRetry={onGenerate ? () => onGenerate(draft) : undefined}
+                    onEdit={() => {
+                      onDismissResult?.();
+                      go(1);
+                    }}
+                  />
+                  </div>
+                ) : null}
+              </>
             ) : null}
           </div>
 
@@ -235,14 +296,16 @@ export function Workbench({
                 {t.studio.back}
               </button>
             ) : null}
-            <button
-              type="button"
-              onClick={advance}
-              disabled={busy || saving}
-              className="inline-flex h-[52px] items-center rounded-md bg-primary px-6 text-base font-bold text-white transition-transform duration-fast active:translate-y-px disabled:opacity-40"
-            >
-              {step === 3 ? (saving ? t.review.saving : t.review.save) : t.studio.continue}
-            </button>
+            {!hasResult ? (
+              <button
+                type="button"
+                onClick={advance}
+                disabled={busy || saving}
+                className="inline-flex h-[52px] items-center rounded-md bg-primary px-6 text-base font-bold text-white transition-transform duration-fast active:translate-y-px disabled:opacity-40"
+              >
+                {step === 3 ? (saving ? t.review.saving : t.review.save) : t.studio.continue}
+              </button>
+            ) : null}
             <span className="text-[14px] text-muted">
               {busy
                 ? t.upload.summary(
@@ -321,14 +384,16 @@ export function Workbench({
               {t.studio.back}
             </button>
           ) : null}
-          <button
-            type="button"
-            onClick={advance}
-            disabled={busy || saving}
-            className="inline-flex h-[52px] flex-1 items-center justify-center rounded-md bg-primary px-6 text-base font-bold text-white disabled:opacity-40"
-          >
-            {step === 3 ? (saving ? t.review.saving : t.review.save) : t.studio.continue}
-          </button>
+          {!hasResult ? (
+            <button
+              type="button"
+              onClick={advance}
+              disabled={busy || saving}
+              className="inline-flex h-[52px] flex-1 items-center justify-center rounded-md bg-primary px-6 text-base font-bold text-white disabled:opacity-40"
+            >
+              {step === 3 ? (saving ? t.review.saving : t.review.save) : t.studio.continue}
+            </button>
+          ) : null}
         </div>
         {busy ? (
           <p className="mt-2.5 text-center text-[13px] text-muted">

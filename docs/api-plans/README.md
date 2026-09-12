@@ -7,7 +7,7 @@ They are here because the api repo's phase plans decide this repo's world: every
 | plan | what it gives the web app |
 |---|---|
 | `2026-09-12-phase-3-credits-orders.md` | **Built and merged.** `GET /api/packs`, `GET /api/settings/public`, `GET /api/credits/balance`, `POST /api/orders`, `GET /api/orders`, `POST /api/orders/:id/cancel`, and the whole `/api/owner/*` tree the `/admin` panel calls (D-037). |
-| `2026-09-12-phase-4-generation-pipeline.md` | **In progress.** `POST /api/projects/:id/generations` (needs an `Idempotency-Key` header, answers **202**) and `GET /api/generations/:id` for polling. |
+| `2026-09-12-phase-4-generation-pipeline.md` | **Built and merged.** `POST /api/projects/:id/generations` (needs an `Idempotency-Key` header, answers **202**) and `GET /api/generations/:id` for polling. |
 
 ## What matters most for the UI
 
@@ -20,4 +20,11 @@ They are here because the api repo's phase plans decide this repo's world: every
 
 ## The client is generated, not written
 
-`openapi.json` in the api repo generates `src/lib/api/generated/schema.ts` here (D-031). **P4 changes that contract**, so regenerate after the api repo's P4 merges rather than hand-editing the generated file.
+`openapi.json` in the api repo generates `src/lib/api/generated/schema.ts` here (D-031), and `pnpm api:check` fails when the two drift. Never hand-edit the generated file.
+
+**Two contract bugs were found by regenerating and reading the output**, which is worth knowing because nothing on the api side could have caught either — it has no client:
+
+- **D-083:** the ad package was typed `unknown`, so the concept, shot plan and prompt arrived as `any` — the whole payload the result screen renders.
+- **D-084:** every **nullable** field was published as an array of its own type. `payerReference` and `rejectionReason` were `string[]` from P3 until 2026-09-12.
+
+Both are fixed and guarded by a test in the api repo. The lesson for this side: after `pnpm api:generate`, **read the diff**. A green `api:check` only means the client matches the contract, not that the contract is right.

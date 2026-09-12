@@ -1,8 +1,8 @@
 /**
  * GENERATED FILE. DO NOT EDIT BY HAND (D-031).
  *
- * Source: jas-ad-studio-api openapi.json @ main (dec385d)
- * Paths:  24
+ * Source: jas-ad-studio-api openapi.json @ main (956d354)
+ * Paths:  26
  *
  * Regenerate with `pnpm api:generate`. `pnpm api:check` fails if this drifted.
  */
@@ -110,6 +110,23 @@ export interface paths {
         };
         /** The caller's credit balance. A new account is at zero (D-010). */
         get: operations["CreditsController_balance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/generations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One generation's status, and its package once it is ready. 404 if not yours. */
+        get: operations["GenerationController_read"];
         put?: never;
         post?: never;
         delete?: never;
@@ -360,6 +377,23 @@ export interface paths {
         patch: operations["ProjectsController_update"];
         trace?: never;
     };
+    "/api/projects/{id}/generations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Queue one ad package. Costs one credit on success; a failure gives it back. The same Idempotency-Key returns the same job and never charges twice. */
+        post: operations["GenerationController_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/projects/{projectId}/assets": {
         parameters: {
             query?: never;
@@ -436,6 +470,14 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AcceptedGenerationDto: {
+            fromCache: boolean;
+            /** Format: uuid */
+            generationId: string;
+            questionsUz: string[];
+            /** @enum {string} */
+            status: "queued" | "running" | "ready" | "needs_input" | "refused" | "failed";
+        };
         AdminPackDto: {
             credits: number;
             id: string;
@@ -489,10 +531,10 @@ export interface components {
             /** Format: uuid */
             id: string;
             packId: string;
-            payerReference: string[];
+            payerReference: string | null;
             /** @enum {string} */
             paymentMethod: "card_transfer" | "payme" | "click" | "other";
-            rejectionReason: string[];
+            rejectionReason: string | null;
             /** @enum {string} */
             status: "pending" | "paid" | "rejected" | "cancelled";
         };
@@ -506,10 +548,10 @@ export interface components {
             /** Format: uuid */
             id: string;
             packId: string;
-            payerReference: string[];
+            payerReference: string | null;
             /** @enum {string} */
             paymentMethod: "card_transfer" | "payme" | "click" | "other";
-            rejectionReason: string[];
+            rejectionReason: string | null;
             /** @enum {string} */
             status: "pending" | "paid" | "rejected" | "cancelled";
         };
@@ -527,6 +569,65 @@ export interface components {
             /** @enum {string} */
             role: "seller" | "owner";
         };
+        GenerationDetailDto: {
+            /** Format: date-time */
+            createdAt: string;
+            errorCode: string | null;
+            /** Format: date-time */
+            finishedAt: string | null;
+            /** Format: uuid */
+            id: string;
+            messageUz: string | null;
+            package: {
+                /** Format: date-time */
+                createdAt: string;
+                /** Format: uuid */
+                generationId: string;
+                promptEn: string;
+                result: {
+                    assumptionsUz: string[];
+                    concept: {
+                        ctaUz: string;
+                        /** @enum {string} */
+                        formatId: "product-film" | "high-energy" | "lifestyle-story" | "ugc-authentic";
+                        hookUz: string;
+                        rationaleUz: string;
+                        titleUz: string;
+                    } | null;
+                    messageUz: string | null;
+                    product: {
+                        category: string;
+                        confirmedClaims: string[];
+                        fidelityConstraints: string[];
+                        observedDetails: string[];
+                        referenceConflicts: string[];
+                        unknownDetails: string[];
+                    };
+                    promptEn: string | null;
+                    questionsUz: string[];
+                    reviewNotesUz: string[];
+                    shots: {
+                        cameraUz: string;
+                        descriptionUz: string;
+                        endSeconds: number;
+                        startSeconds: number;
+                    }[];
+                    /** @enum {string} */
+                    status: "ready" | "needs_input" | "refused";
+                    target: {
+                        /** @enum {string} */
+                        aspectRatio: "9:16" | "16:9" | "1:1";
+                        durationSeconds: number;
+                        targetId: string;
+                    } | null;
+                };
+            } | null;
+            /** Format: uuid */
+            projectId: string;
+            questionsUz: string[];
+            /** @enum {string} */
+            status: "queued" | "running" | "ready" | "needs_input" | "refused" | "failed";
+        };
         GrantDto: {
             credits: number;
             note: string;
@@ -543,10 +644,10 @@ export interface components {
             /** Format: uuid */
             id: string;
             packId: string;
-            payerReference: string[];
+            payerReference: string | null;
             /** @enum {string} */
             paymentMethod: "card_transfer" | "payme" | "click" | "other";
-            rejectionReason: string[];
+            rejectionReason: string | null;
             /** @enum {string} */
             status: "pending" | "paid" | "rejected" | "cancelled";
             /** Format: email */
@@ -768,6 +869,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CreditBalanceDto"];
+                };
+            };
+        };
+    };
+    GenerationController_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerationDetailDto"];
                 };
             };
         };
@@ -1156,6 +1278,31 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProjectSummaryDto"];
+                };
+            };
+        };
+    };
+    GenerationController_request: {
+        parameters: {
+            query?: never;
+            header: {
+                "idempotency-key": string;
+                /** @description Per attempt, reused on retry. This is the double-click guard (§32). */
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcceptedGenerationDto"];
                 };
             };
         };

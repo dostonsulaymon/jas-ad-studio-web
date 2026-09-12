@@ -210,9 +210,58 @@ export const uzLatn = {
     saving: 'Saqlanmoqda',
     saved: 'Loyiha saqlandi',
     notSet: 'Koʻrsatilmagan',
-    // Generation is P4. The step is honest about what it does today rather than
-    // showing a primary action that never becomes available.
-    generationLater: 'Ssenariy va prompt tayyorlash keyingi bosqichda qoʻshiladi.',
+    // P4 shipped, so the step no longer has to apologise for a missing action. The note
+    // now says what the button will cost, which is the thing a seller needs to know
+    // BEFORE pressing it (Addendum A §A2, §16).
+    generationCost: 'Bu amal 1 ta prompt kreditini ishlatadi.',
+    generate: 'Prompt tayyorlash',
+  },
+
+  /**
+   * The generation flow. Uzbek for the seller, and never a raw provider message: a
+   * refusal shows the model's own Uzbek explanation, a failure shows mapped copy.
+   */
+  generate: {
+    queuedTitle: 'Navbatda',
+    runningTitle: 'Tayyorlanmoqda',
+    // ~60s measured (D-082). Saying so beats a spinner with no end in sight.
+    runningNote: 'Bu odatda bir daqiqacha davom etadi. Sahifani yopsangiz ham yoʻqolmaydi.',
+    stillRunning: 'Hali tayyor emas',
+    stillRunningNote:
+      'Kutish uzoq davom etdi. Krediting saqlanib qoldi — loyihalar roʻyxatidan keyinroq tekshiring.',
+
+    readyTitle: 'Prompt tayyor',
+    readySub: 'Nusxa oling va Google Flow ichida videoni tayyorlang.',
+
+    conceptLabel: 'Gʻoya',
+    hookLabel: 'Ilk jumla',
+    ctaLabel: 'Chaqiriq',
+    shotsLabel: 'Kadrlar rejasi',
+    promptLabel: 'Google Flow uchun prompt (inglizcha)',
+    cameraLabel: 'Kamera',
+    assumptionsLabel: 'Taxminlar',
+    reviewNotesLabel: 'Eʼtiborga olinglar',
+    fidelityLabel: 'Mahsulot qoidalari',
+
+    copy: 'Promptni nusxalash',
+    copied: 'Nusxalandi',
+    // The Clipboard API is missing in some in-app browsers, which is where a seller
+    // arriving from Telegram actually is. So this is an expected path, not an error.
+    copyManual: 'Nusxalash ishlamadi. Matnni belgilab, qoʻlda nusxalang.',
+    download: 'TXT sifatida saqlash',
+    openFlow: 'Google Flow’ni ochish',
+    // Product rule: the app writes prompts, Flow makes the video. Never implied otherwise.
+    flowNote:
+      'Videoni Google Flow tayyorlaydi. Modelni, oʻlchamni va uzunlikni Flow ichida oʻzingiz tanlaysiz.',
+
+    questionsTitle: 'Bir-ikki savol bor',
+    questionsSub: 'Javob bering yoki rasm va tavsifni aniqlashtiring — krediting ishlatilmadi.',
+    refusedTitle: 'Bu mahsulot uchun prompt tayyorlanmadi',
+    refusedSub: 'Krediting qaytarildi.',
+    failedTitle: 'Tayyorlash uzilib qoldi',
+    failedSub: 'Krediting qaytarildi. Yana urinib koʻrishingiz mumkin.',
+    retry: 'Yana urinish',
+    cached: 'Bu savollar avvalgi javobdan olindi — yangi kredit ishlatilmadi.',
   },
 
   projects: {
@@ -335,6 +384,39 @@ export const uzLatn = {
       message: 'Kutilmagan xatolik.',
       action: 'Qaytadan urinish',
       detail: '',
+    },
+    // P4's five codes. Session B's errors.test.ts reads the api's main branch and fails
+    // if any seller-facing code has no copy here, which is how these were found.
+    generation_not_found: {
+      message: 'Bu natija topilmadi.',
+      action: 'Loyihalar roʻyxatiga qaytish',
+      detail: '',
+    },
+    idempotency_key_required: {
+      message: 'Soʻrov toʻliq yuborilmadi.',
+      action: 'Sahifani yangilab, qaytadan urinish',
+      // A client bug, not the seller's: the key is added by the app, never typed.
+      detail: 'Limitingiz sarflanmadi.',
+    },
+    job_in_flight: {
+      message: 'Bitta prompt allaqachon tayyorlanmoqda.',
+      action: 'Tayyor boʻlishini kutish',
+      detail: 'Bir vaqtda bitta prompt tayyorlanadi.',
+    },
+    needs_input_cap: {
+      message: 'Bu loyiha uchun savollar koʻpaydi.',
+      action: 'Rasm va tavsifni aniqlashtirish',
+      detail: 'Ertaga yana urinib koʻrishingiz mumkin. Limitingiz sarflanmadi.',
+    },
+    no_assets: {
+      message: 'Mahsulot rasmi yuklanmagan.',
+      action: 'Kamida bitta rasm yuklash',
+      detail: '',
+    },
+    generation_still_running: {
+      message: 'Hali tayyor emas',
+      action: 'Loyihalar roʻyxatidan keyinroq tekshiring',
+      detail: 'Krediting saqlanib qoldi. Tayyor boʻlgach, natija loyihada turadi.',
     },
     network_offline: {
       message: 'Internet aloqasi uzildi.',

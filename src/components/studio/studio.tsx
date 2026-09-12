@@ -1,10 +1,17 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Workbench } from './workbench';
 import type { Photo } from './photo-rail';
 import type { UploadItem } from './upload-list';
 import { api, ApiError } from '@/lib/api/client';
+import {
+  newIdempotencyKey,
+  pollUntilDone,
+  startGeneration,
+  type GenerationDetailDto,
+  type JobStatus,
+} from '@/lib/generation';
 import { toBriefDto, isStep1Complete, LIMITS, type Draft, type ProjectSummaryDto, type StoredAssetDto } from '@/lib/brief';
 import { t } from '@/lib/i18n';
 
@@ -18,6 +25,32 @@ import { t } from '@/lib/i18n';
  * refused with a plain instruction rather than being sent with invented placeholder
  * text, which would write a fabricated claim into the seller's own project.
  */
+/**
+ * The project id is persisted beside the draft, not held only in a ref.
+ *
+ * The draft already survives a reload, so without this a seller who refreshes after
+ * uploading gets their words back but not their project: continuing would POST a second
+ * project and leave the photos attached to the first one, invisible and unreachable.
+ */
+const PROJECT_KEY = 'jas.projectId.v1';
+
+function readStoredProjectId(): string | null {
+  try {
+    return sessionStorage.getItem(PROJECT_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function storeProjectId(id: string | null): void {
+  try {
+    if (id) sessionStorage.setItem(PROJECT_KEY, id);
+    else sessionStorage.removeItem(PROJECT_KEY);
+  } catch {
+    /* a blocked sessionStorage is not worth an error screen */
+  }
+}
+
 export function Studio({ onSaved }: { onSaved?: (project: ProjectSummaryDto) => void }) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [uploads, setUploads] = useState<UploadItem[]>([]);
@@ -25,7 +58,23 @@ export function Studio({ onSaved }: { onSaved?: (project: ProjectSummaryDto) => 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const projectId = useRef<string | null>(null);
+  useEffect(() => {
+    projectId.current = readStoredProjectId();
+  }, []);
   const lastDraft = useRef<Draft | null>(null);
+
+  const [generation, setGeneration] = useState<GenerationDetailDto | null>(null);
+  const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
+  const [fromCache, setFromCache] = useState(false);
+  /**
+   * One key per attempt, held here and reused by a retry of that attempt.
+   *
+   * This is the double-click guard (§32): the API returns the same job for a repeated
+   * key and charges once, so generating a fresh key on retry is the single mistake that
+   * could charge a seller twice. It is cleared only when an attempt reaches a terminal
+   * state, which is when a new attempt legitimately begins.
+   */
+  const attemptKey = useRef<string | null>(null);
 
   const patchUpload = (id: string, state: UploadItem['state']) =>
     setUploads((list) => list.map((u) => (u.id === id ? { ...u, state } : u)));
@@ -116,6 +165,7 @@ export function Studio({ onSaved }: { onSaved?: (project: ProjectSummaryDto) => 
             json: toBriefDto(draft),
           });
           projectId.current = project.id;
+          storeProjectId(project.id);
         } catch (created) {
           setUploads((list) => list.filter((u) => !items.some((i) => i.id === u.id)));
           setError(created);
@@ -166,12 +216,82 @@ export function Studio({ onSaved }: { onSaved?: (project: ProjectSummaryDto) => 
           ? await api.patch<ProjectSummaryDto>(`/api/projects/${projectId.current}`, { json: body })
           : await api.post<ProjectSummaryDto>('/api/projects', { json: body });
         projectId.current = project.id;
+        storeProjectId(project.id);
         setSaved(true);
         onSaved?.(project);
       } catch (failed) {
         setError(failed);
       } finally {
         setSaving(false);
+      }
+    },
+    [onSaved],
+  );
+
+  /**
+   * Save the brief, then generate.
+   *
+   * The save comes first because the worker reads the brief from the project row, not
+   * from this request — so generating without saving would produce a package for a
+   * previous version of the brief the seller is looking at.
+   */
+  const generate = useCallback(
+    async (draft: Draft) => {
+      setError(null);
+      setGeneration(null);
+      setFromCache(false);
+      lastDraft.current = draft;
+
+      let project = projectId.current;
+      try {
+        const body = toBriefDto(draft);
+        const saved = project
+          ? await api.patch<ProjectSummaryDto>(`/api/projects/${project}`, { json: body })
+          : await api.post<ProjectSummaryDto>('/api/projects', { json: body });
+        project = saved.id;
+        projectId.current = project;
+        onSaved?.(saved);
+      } catch (failed) {
+        setError(failed);
+        return;
+      }
+
+      attemptKey.current ??= newIdempotencyKey();
+      setJobStatus('queued');
+
+      try {
+        const { accepted, fromCache: cached } = await startGeneration(project, attemptKey.current);
+        setFromCache(cached);
+
+        // A §29 cache hit is already the final answer: there is no job to poll, no
+        // credit was spent, and polling a cache id would 404.
+        if (cached) {
+          setJobStatus('needs_input');
+          setGeneration({
+            id: accepted.generationId,
+            projectId: project,
+            status: 'needs_input',
+            questionsUz: accepted.questionsUz,
+            messageUz: null,
+            errorCode: null,
+            createdAt: new Date().toISOString(),
+            finishedAt: new Date().toISOString(),
+            package: null,
+          });
+          attemptKey.current = null;
+          return;
+        }
+
+        const done = await pollUntilDone(accepted.generationId, { onStatus: setJobStatus });
+        setGeneration(done);
+        setJobStatus(done.status);
+        // The attempt is finished, whatever the outcome, so the next press is a new one.
+        attemptKey.current = null;
+      } catch (failed) {
+        setError(failed);
+        setJobStatus(null);
+        // The key is deliberately KEPT: the job may well exist and be running, and
+        // retrying with the same key rejoins it instead of paying for a second one.
       }
     },
     [onSaved],
@@ -189,9 +309,21 @@ export function Studio({ onSaved }: { onSaved?: (project: ProjectSummaryDto) => 
       onRemovePhoto={removePhoto}
       onRemoveUpload={removeUpload}
       onSave={save}
+      generation={generation}
+      jobStatus={jobStatus}
+      fromCache={fromCache}
+      onGenerate={generate}
+      onDismissResult={() => {
+        setGeneration(null);
+        setJobStatus(null);
+      }}
       onRetry={() => {
         setError(null);
-        if (lastDraft.current) void save(lastDraft.current);
+        // A failed generation retries the generation, not the save: the seller pressed
+        // "prompt tayyorlash" and that is what should happen again.
+        if (!lastDraft.current) return;
+        if (jobStatus !== null || generation !== null) void generate(lastDraft.current);
+        else void save(lastDraft.current);
       }}
     />
   );

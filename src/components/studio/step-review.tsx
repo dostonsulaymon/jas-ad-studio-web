@@ -4,21 +4,28 @@ import { t } from '@/lib/i18n';
 import type { Draft } from '@/lib/brief';
 
 /**
- * Step 3. Review and save.
+ * Step 3. Review, then generate.
  *
- * The step is called "Tekshirish va saqlash", not "va tayyorlash". Generation needs an
- * endpoint that does not exist until P4, and a permanently greyed "Tayyorlash" button
- * that never becomes available is worse than an honest label. The note at the bottom
- * says so in plain Uzbek rather than leaving the seller to work it out.
+ * The step used to be "review and save" with a note apologising for the missing action,
+ * because generation had no endpoint until P4. It has one now, so the action is real —
+ * and it states its price before it is pressed (Addendum A §A2 §16), because one press
+ * spends a credit and a seller should not discover that afterwards.
+ *
+ * The button is disabled with no photos rather than hidden: the API would refuse with
+ * NO_ASSETS, and a disabled control next to the photo row explains itself.
  */
 export function StepReview({
   draft,
   photoCount,
   onEdit,
+  onGenerate,
+  generating,
 }: {
   draft: Draft;
   photoCount: number;
   onEdit: (step: 1 | 2) => void;
+  onGenerate?: () => void;
+  generating?: boolean;
 }) {
   const rows: Array<{ label: string; value: string; step: 1 | 2 }> = [
     { label: t.product.photosLabel, value: t.projects.photoCount(photoCount), step: 1 },
@@ -73,7 +80,22 @@ export function StepReview({
         ))}
       </dl>
 
-      <p className="mt-6 text-[14.5px] leading-relaxed text-muted">{t.review.generationLater}</p>
+      {onGenerate ? (
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={onGenerate}
+            disabled={generating === true || photoCount === 0}
+            className="inline-flex h-12 items-center rounded-sm bg-primary px-6 text-[15.5px] font-semibold text-white disabled:opacity-45"
+          >
+            {t.review.generate}
+          </button>
+          {/* Said before the press, not after: this is the moment a credit is spent. */}
+          <p className="mt-2.5 text-[14.5px] leading-relaxed text-muted">
+            {t.review.generationCost}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }

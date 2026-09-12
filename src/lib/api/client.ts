@@ -20,6 +20,15 @@ export interface RequestOptions {
   /** multipart body, for photo upload. Never given a Content-Type by hand. */
   form?: FormData;
   signal?: AbortSignal;
+  /**
+   * Idempotency-Key, required by POST /api/projects/:id/generations.
+   *
+   * Named rather than a generic headers bag, for the same reason this file exists: what
+   * the API demands of a caller lives here, so no component can forget it. The API
+   * returns the same job for a repeated key and charges once (source 01 §32), so the
+   * caller must reuse one key across retries of an attempt — see newIdempotencyKey.
+   */
+  idempotencyKey?: string;
 }
 
 /**
@@ -32,6 +41,7 @@ async function request<T>(method: Method, path: string, options: RequestOptions 
   const headers: Record<string, string> = { Accept: 'application/json' };
 
   if (!SAFE_METHODS.has(method)) headers['X-Requested-With'] = REQUESTED_WITH;
+  if (options.idempotencyKey) headers['Idempotency-Key'] = options.idempotencyKey;
 
   let body: BodyInit | undefined;
   if (options.form) {
