@@ -8,6 +8,7 @@
     "start": "next start -p 3043",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test": "node --test \"src/**/*.test.ts\"",
     "api:generate": "node scripts/generate-api-client.mjs",
     "api:check": "node scripts/generate-api-client.mjs --check",
     "test:e2e": "playwright test"

@@ -1,8 +1,121 @@
 @import "tailwindcss";
 
-/* Task 2 replaces this with the locked palette from CLAUDE.md as @theme tokens.
-   Until then the page still paints its own ground rather than inheriting one. */
+/**
+ * The palette is fixed by CLAUDE.md and source 01 §5. Changing any value here needs a
+ * DECISIONS.md entry and Doston's approval.
+ *
+ * The two stone tints are not new colours: they are the background mixed toward the
+ * border, for surfaces that need to sit behind the page ground without becoming cards.
+ * Product photography supplies every other colour on the page. The interface never
+ * recolours a seller's product.
+ */
+@theme {
+  --color-bg: #f6f5f1;
+  --color-ink: #17211d;
+  --color-muted: #56625c;
+  --color-primary: #163d32;
+  --color-accent: #d9f36a;
+  --color-border: #dedfd7;
+  --color-stone-1: #edece6;
+  --color-stone-2: #e6e5de;
+
+  /* Corners 12-18px. Not everything is a pill. */
+  --radius-sm: 12px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+
+  /* Motion is 160-280ms and purposeful (source 01 §38). */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+@theme {
+  --duration-fast: 160ms;
+  --duration-base: 220ms;
+  --duration-slow: 280ms;
+}
+
+/**
+ * One warm off-white ground, deliberately single-theme. There is no dark mode and no
+ * toggle: this is a fixed brand palette, not a themeable surface. Both colours are
+ * painted explicitly so the page never borrows a host ground.
+ */
+html {
+  background: var(--color-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: #f6f5f1;
-  color: #17211d;
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Form controls never inherit a smaller size than the page: 16px or the phone zooms. */
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  font-size: max(1rem, 16px);
+}
+
+/**
+ * Focus is visible on everything, always. `:focus-visible` rather than `:focus` so a
+ * mouse click on a button does not leave a ring behind, but every keyboard stop does.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* The skip link is the first focusable element and is only visible when focused. */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -64px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top var(--duration-fast) var(--ease-out-soft);
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+/**
+ * Performance beats decorative motion, and a seller who has asked their phone to stop
+ * animating gets a still page. Everything collapses, including smooth scrolling.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
