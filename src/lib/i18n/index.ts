@@ -44,14 +44,31 @@ export function knownMessageKeys(): string[] {
   return Object.keys(uzLatn.errors).map((code) => messageKeyFor(code));
 }
 
-const DATE = new Intl.DateTimeFormat('uz-Latn-UZ', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
+/**
+ * Uzbek month names, written out rather than taken from Intl.
+ *
+ * Intl.DateTimeFormat('uz-Latn-UZ', { month: 'long' }) produces "M09" on this Node
+ * build, because the ICU data it ships has no Uzbek Latin month names. A seller reading
+ * "2026 M09 12" would reasonably think the page was broken.
+ */
+const MONTHS = [
+  'yanvar',
+  'fevral',
+  'mart',
+  'aprel',
+  'may',
+  'iyun',
+  'iyul',
+  'avgust',
+  'sentabr',
+  'oktabr',
+  'noyabr',
+  'dekabr',
+] as const;
 
-/** Formats an ISO timestamp from the API for display. */
+/** Formats an ISO timestamp from the API for display: "12-sentabr, 2026". */
 export function formatDate(iso: string): string {
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? '' : DATE.format(date);
+  if (Number.isNaN(date.getTime())) return '';
+  return `${date.getDate()}-${MONTHS[date.getMonth()]}, ${date.getFullYear()}`;
 }

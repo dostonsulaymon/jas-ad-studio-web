@@ -1,13 +1,13 @@
+import { App } from '@/components/app';
 import { Faq } from '@/components/faq';
 import { Hero } from '@/components/hero';
 import { HowItWorks } from '@/components/how-it-works';
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 import { t } from '@/lib/i18n';
 
 /**
- * One page, server-rendered (spec §8). The studio is the only client island, and it
- * arrives in Task 9. Everything here is static.
+ * One page, `/` (spec §8). The hero, how-it-works and FAQ are server-rendered; the
+ * header, studio and drawer are the single client island inside <App>.
  */
 export default function Home() {
   return (
@@ -16,22 +16,15 @@ export default function Home() {
         {t.nav.skipToContent}
       </a>
 
-      <SiteHeader
-        right={
-          <a
-            href="/api/auth/google"
-            className="inline-flex h-11 items-center rounded-sm px-3 text-[14.5px] font-semibold text-muted hover:text-ink"
-          >
-            {t.nav.signIn}
-          </a>
+      <App
+        hero={<Hero />}
+        sections={
+          <>
+            <HowItWorks />
+            <Faq />
+          </>
         }
       />
-
-      <main id="asosiy">
-        <Hero />
-        <HowItWorks />
-        <Faq />
-      </main>
 
       <SiteFooter />
     </>

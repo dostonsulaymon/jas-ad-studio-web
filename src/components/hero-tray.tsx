@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useId, useRef } from 'react';
+import { useId } from 'react';
 import { t } from '@/lib/i18n';
 
 /**
@@ -56,9 +56,15 @@ function PlateImg({ plate }: { plate: Plate }) {
   );
 }
 
-export function HeroTray({ onFiles }: { onFiles?: (files: FileList) => void }) {
+/**
+ * The slot is the real upload, not a decoy, but the studio owns uploading. One custom
+ * event hands the files over and scrolls there, so there is exactly one upload path
+ * instead of two that can disagree.
+ */
+export const HERO_FILES_EVENT = 'jas:hero-files';
+
+export function HeroTray() {
   const inputId = useId();
-  const input = useRef<HTMLInputElement>(null);
 
   return (
     <div
@@ -89,14 +95,17 @@ export function HeroTray({ onFiles }: { onFiles?: (files: FileList) => void }) {
             {t.hero.trayDropTitle2}
           </span>
           <input
-            ref={input}
             id={inputId}
             type="file"
             multiple
             accept="image/jpeg,image/png,image/webp"
             className="sr-only"
             onChange={(event) => {
-              if (event.target.files?.length) onFiles?.(event.target.files);
+              const files = event.target.files;
+              if (!files?.length) return;
+              window.dispatchEvent(new CustomEvent(HERO_FILES_EVENT, { detail: files }));
+              document.getElementById('studiya-boshlash')?.scrollIntoView({ behavior: 'smooth' });
+              event.target.value = '';
             }}
           />
         </label>

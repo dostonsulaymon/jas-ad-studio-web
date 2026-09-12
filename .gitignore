@@ -45,3 +45,6 @@ public/namunalar/
 # Playwright
 /test-results
 /playwright-report
+
+# Ad-hoc screenshot drivers live in the scratchpad, not the repo.
+shoot*.mjs

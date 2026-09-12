@@ -122,6 +122,7 @@ export const uzLatn = {
     uploading: (percent: number) => `${percent}%`,
     done: 'tayyor',
     notAnImage: 'Bu rasm emas',
+    refusedFile: (name: string) => `${name} qabul qilinmadi.`,
     remove: 'Olib tashlash',
     retry: 'Qaytadan urinish',
     progressAnnounce: (name: string, percent: number) => `${name}: ${percent} foiz`,
@@ -387,6 +388,47 @@ export const uzLatn = {
       message: 'Bugungi chegara tugadi.',
       action: 'Ertaga urinish',
       detail: '',
+    },
+    // P3 merged to main on 2026-09-12 while P5 was being built, bringing seven codes
+    // with it. Copy is written now so the credit and order screens inherit a complete
+    // error map; those screens themselves are not built yet.
+    order_not_found: {
+      message: 'Buyurtma topilmadi.',
+      action: 'Buyurtmalarni koʻrish',
+      detail: '',
+    },
+    order_not_pending: {
+      message: 'Bu buyurtma allaqachon koʻrib chiqilgan.',
+      action: 'Holatni yangilash',
+      detail: '',
+    },
+    pack_not_available: {
+      message: 'Bu paket hozir mavjud emas.',
+      action: 'Boshqa paketni tanlash',
+      detail: '',
+    },
+    payment_not_configured: {
+      message: 'Toʻlov usullari hali sozlanmagan.',
+      action: 'Keyinroq urinish',
+      detail: '',
+    },
+    setting_not_found: {
+      message: 'Sozlama topilmadi.',
+      action: 'Sahifani yangilash',
+      detail: '',
+    },
+    grant_note_required: {
+      // Owner-facing: the admin panel requires a note on every grant (D-037).
+      message: 'Izoh yozilishi shart.',
+      action: 'Izoh qoʻshing',
+      detail: '',
+    },
+    ledger_invariant: {
+      // Internal. If this ever reaches a seller it is a bug, so the copy says nothing
+      // about the ledger and offers the one safe action.
+      message: 'Kutilmagan xatolik.',
+      action: 'Qoʻllab-quvvatlashga murojaat qiling',
+      detail: 'Hisobingizdan hech narsa yechilmadi.',
     },
   },
 

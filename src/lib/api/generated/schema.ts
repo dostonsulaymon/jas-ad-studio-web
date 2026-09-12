@@ -1,8 +1,8 @@
 /**
  * GENERATED FILE. DO NOT EDIT BY HAND (D-031).
  *
- * Source: jas-ad-studio-api openapi.json @ main (28cd5b6)
- * Paths:  11
+ * Source: jas-ad-studio-api openapi.json @ main (dec385d)
+ * Paths:  24
  *
  * Regenerate with `pnpm api:generate`. `pnpm api:check` fails if this drifted.
  */
@@ -101,6 +101,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/credits/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The caller's credit balance. A new account is at zero (D-010). */
+        get: operations["CreditsController_balance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -110,6 +127,194 @@ export interface paths {
         };
         /** The signed-in user. The role comes from OWNER_EMAILS (D-037). */
         get: operations["AuthController_me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The caller's own orders, newest first. */
+        get: operations["CreditsController_list"];
+        put?: never;
+        /** Place an order for a pack. It stays pending until the owner confirms (D-008). */
+        post: operations["CreditsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel your own pending order. 404 if it is not yours. */
+        post: operations["CreditsController_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Grant credits by hand. The note is required (A3). */
+        post: operations["OwnerController_grant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The order queue, oldest first. Filter with ?status=pending. */
+        get: operations["OwnerController_listOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/orders/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm a payment. Idempotent: a second confirm credits nothing (A8). */
+        post: operations["OwnerController_confirm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/orders/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a payment with a reason the seller is shown. */
+        post: operations["OwnerController_reject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/packs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit a pack. Activating one requires stating its price in the same request. */
+        patch: operations["OwnerController_setPack"];
+        trace?: never;
+    };
+    "/api/owner/settings/payment-instructions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set the card number, Payme/Click links and Uzbek instructions. */
+        patch: operations["OwnerController_setPaymentInstructions"];
+        trace?: never;
+    };
+    "/api/owner/settings/support-contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set the Telegram account, Telegram bot and support email. */
+        patch: operations["OwnerController_setSupportContacts"];
+        trace?: never;
+    };
+    "/api/owner/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Users with their credit balances. Read-only. */
+        get: operations["OwnerController_listUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/packs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Packs for sale. Empty until the owner prices and activates one (A8). */
+        get: operations["CreditsController_listPacks"];
         put?: never;
         post?: never;
         delete?: never;
@@ -176,6 +381,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/settings/public": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Payment instructions and support contacts. Works signed out. */
+        get: operations["SettingsController_getPublic"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health/live": {
         parameters: {
             query?: never;
@@ -214,6 +436,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AdminPackDto: {
+            credits: number;
+            id: string;
+            isActive: boolean;
+            priceUzs: number | null;
+            sortOrder: number;
+        };
         BriefDto: {
             /** @enum {string} */
             aspectRatio: "9:16" | "16:9" | "1:1";
@@ -240,6 +469,56 @@ export interface components {
             platform: "instagram" | "telegram" | "tiktok" | "youtube-shorts";
             productName: string;
         };
+        CreateOrderDto: {
+            packId: string;
+            payerReference?: string | null;
+            /** @enum {string} */
+            paymentMethod: "card_transfer" | "payme" | "click" | "other";
+        };
+        CreditBalanceDto: {
+            available: number;
+            reserved: number;
+        };
+        CreditOrderDto: {
+            amountUzs: number;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            credits: number;
+            /** Format: uuid */
+            id: string;
+            packId: string;
+            payerReference: string[];
+            /** @enum {string} */
+            paymentMethod: "card_transfer" | "payme" | "click" | "other";
+            rejectionReason: string[];
+            /** @enum {string} */
+            status: "pending" | "paid" | "rejected" | "cancelled";
+        };
+        CreditOrderSummaryDto: {
+            amountUzs: number;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            credits: number;
+            /** Format: uuid */
+            id: string;
+            packId: string;
+            payerReference: string[];
+            /** @enum {string} */
+            paymentMethod: "card_transfer" | "payme" | "click" | "other";
+            rejectionReason: string[];
+            /** @enum {string} */
+            status: "pending" | "paid" | "rejected" | "cancelled";
+        };
+        CreditPackDto: {
+            credits: number;
+            id: string;
+            priceUzs: number;
+            sortOrder: number;
+        };
         CurrentUserDto: {
             /** Format: email */
             email: string;
@@ -247,6 +526,67 @@ export interface components {
             id: string;
             /** @enum {string} */
             role: "seller" | "owner";
+        };
+        GrantDto: {
+            credits: number;
+            note: string;
+            /** Format: uuid */
+            userId: string;
+        };
+        OwnerOrderDto: {
+            amountUzs: number;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            credits: number;
+            /** Format: uuid */
+            id: string;
+            packId: string;
+            payerReference: string[];
+            /** @enum {string} */
+            paymentMethod: "card_transfer" | "payme" | "click" | "other";
+            rejectionReason: string[];
+            /** @enum {string} */
+            status: "pending" | "paid" | "rejected" | "cancelled";
+            /** Format: email */
+            userEmail: string;
+            /** Format: uuid */
+            userId: string;
+        };
+        OwnerUserDto: {
+            available: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: email */
+            email: string;
+            /** Format: uuid */
+            id: string;
+            reserved: number;
+            role: string;
+        };
+        PackEditDto: {
+            isActive?: boolean;
+            priceUzs?: number;
+            sortOrder?: number;
+        };
+        PaymentInstructionsDto: {
+            /** @default null */
+            cardHolder: string | null;
+            /** @default null */
+            cardNumber: string | null;
+            /**
+             * Format: uri
+             * @default null
+             */
+            clickUrl: string | null;
+            /** @default null */
+            instructionsUz: string | null;
+            /**
+             * Format: uri
+             * @default null
+             */
+            paymeUrl: string | null;
         };
         ProjectSummaryDto: {
             aspectRatio: string;
@@ -258,6 +598,40 @@ export interface components {
             id: string;
             name: string;
         };
+        PublicSettingsDto: {
+            paymentInstructions: {
+                /** @default null */
+                cardHolder: string | null;
+                /** @default null */
+                cardNumber: string | null;
+                /**
+                 * Format: uri
+                 * @default null
+                 */
+                clickUrl: string | null;
+                /** @default null */
+                instructionsUz: string | null;
+                /**
+                 * Format: uri
+                 * @default null
+                 */
+                paymeUrl: string | null;
+            };
+            supportContacts: {
+                /**
+                 * Format: email
+                 * @default null
+                 */
+                email: string | null;
+                /** @default null */
+                telegramBot: string | null;
+                /** @default null */
+                telegramUser: string | null;
+            };
+        };
+        RejectOrderDto: {
+            reason: string;
+        };
         StoredAssetDto: {
             bytes: number;
             height: number;
@@ -267,6 +641,17 @@ export interface components {
             /** Format: uuid */
             projectId: string;
             width: number;
+        };
+        SupportContactsDto: {
+            /**
+             * Format: email
+             * @default null
+             */
+            email: string | null;
+            /** @default null */
+            telegramBot: string | null;
+            /** @default null */
+            telegramUser: string | null;
         };
     };
     responses: never;
@@ -368,6 +753,25 @@ export interface operations {
             };
         };
     };
+    CreditsController_balance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditBalanceDto"];
+                };
+            };
+        };
+    };
     AuthController_me: {
         parameters: {
             query?: never;
@@ -383,6 +787,268 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CurrentUserDto"];
+                };
+            };
+        };
+    };
+    CreditsController_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditOrderDto"][];
+                };
+            };
+        };
+    };
+    CreditsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditOrderDto"];
+                };
+            };
+        };
+    };
+    CreditsController_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditOrderDto"];
+                };
+            };
+        };
+    };
+    OwnerController_grant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditBalanceDto"];
+                };
+            };
+        };
+    };
+    OwnerController_listOrders: {
+        parameters: {
+            query: {
+                status: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerOrderDto"][];
+                };
+            };
+        };
+    };
+    OwnerController_confirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditOrderSummaryDto"];
+                };
+            };
+        };
+    };
+    OwnerController_reject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectOrderDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditOrderSummaryDto"];
+                };
+            };
+        };
+    };
+    OwnerController_setPack: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PackEditDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPackDto"];
+                };
+            };
+        };
+    };
+    OwnerController_setPaymentInstructions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentInstructionsDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentInstructionsDto"];
+                };
+            };
+        };
+    };
+    OwnerController_setSupportContacts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupportContactsDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportContactsDto"];
+                };
+            };
+        };
+    };
+    OwnerController_listUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerUserDto"][];
+                };
+            };
+        };
+    };
+    CreditsController_listPacks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditPackDto"][];
                 };
             };
         };
@@ -539,6 +1205,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StoredAssetDto"];
+                };
+            };
+        };
+    };
+    SettingsController_getPublic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSettingsDto"];
                 };
             };
         };
