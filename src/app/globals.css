@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Task 2 replaces this with the locked palette from CLAUDE.md as @theme tokens.
+   Until then the page still paints its own ground rather than inheriting one. */
+body {
+  background: #f6f5f1;
+  color: #17211d;
+}

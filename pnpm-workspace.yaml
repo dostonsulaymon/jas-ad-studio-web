@@ -1,0 +1,5 @@
+# Build scripts are opt-in under pnpm 11. Mirrors kitobnarx-web (D-035): unrs-resolver
+# is the native resolver behind eslint-import-resolver-typescript and runs fine on its
+# prebuilt binaries, so its postinstall stays denied rather than approved.
+allowBuilds:
+  unrs-resolver: false
