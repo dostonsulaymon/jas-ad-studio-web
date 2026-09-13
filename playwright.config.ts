@@ -10,7 +10,7 @@ export default defineConfig({
   workers: 4,
   reporter: [['list']],
   use: {
-    baseURL: process.env.BASE_URL ?? 'http://localhost:3046',
+    baseURL: process.env.BASE_URL ?? 'http://localhost:3042',
     channel: 'chrome',
     launchOptions: { args: ['--no-sandbox'] },
   },

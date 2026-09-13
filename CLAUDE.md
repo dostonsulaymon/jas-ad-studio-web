@@ -38,9 +38,9 @@ Next.js 16.3 App Router · React 19 · TypeScript · Tailwind v4 (`@tailwindcss/
 
 | | |
 |---|---|
-| `pnpm dev` | dev server on **3046**, rewrites `/api/*` to 3040 |
+| `pnpm dev` | dev server on **3042**, rewrites `/api/*` to 3040. This is what pm2 `jas-web` runs and the public site serves |
 | `pnpm lint` · `pnpm typecheck` · `pnpm test` | checks |
-| `BASE_URL=http://localhost:3046 pnpm test:e2e` | Playwright ×3 widths against the running dev server |
+| `pnpm test:e2e` | Playwright ×3 widths against the running dev server on 3042 |
 | `pnpm api:generate` / `api:check` | regenerate / verify API types |
 
 The gallery e2e tests use the real API (published examples); every signed-in screen uses stubs from `tests/fixtures.ts`.
@@ -48,7 +48,8 @@ The gallery e2e tests use the real API (published examples); every signed-in scr
 ## Gotchas found building v2
 
 - **Sora, Manrope, Geist, Golos, Figtree and Archivo have no U+02BB**; Onest, Inter and Inter Tight do. `document.fonts.check()` returns true even when the glyph is missing, so only a rendered, zoomed screenshot proves it.
-- **Writes from 3046 are refused by the real API** (`CROSS_ORIGIN_REFUSED`): the api's `EXTRA_WEB_ORIGINS` lists only 3042. Adding 3046 needs Doston's yes and a `jas-api`/`jas-worker` restart. Google sign-in always returns to the public host, so signed-in screens are tested on stubs.
+- **Since 2026-09-13 v2 is the live site.** pm2 `jas-web` runs `pnpm dev` here on 3042 with `DEV_ALLOWED_ORIGINS=jas.kitobnarxi.uz`, and the `jas-ad-studio` tunnel serves it at https://jas.kitobnarxi.uz. v1 (`../jas-ad-studio-web`) is stopped and no longer in pm2. **Every saved edit here reaches real visitors on the next hot reload.** Run `pm2 save` (pm2 lives under Node 22: `~/.nvm/versions/node/v22.17.1/bin/pm2`) after changing the process.
+- The API accepts writes only from `https://jas.kitobnarxi.uz` and `localhost:3042`. Google sign-in always returns to the public host, so Playwright tests signed-in screens on stubs.
 - **`GET /api/packs` returns only priced packs**, and there is no owner list endpoint, so the admin cannot set a *first* price from the UI. That is an API gap, not a UI bug.
 - **Hero photo slots are v1's indices (0–6)**, so the owner's saved `heroPhotos` overrides land on the same pictures (`src/lib/content.ts`).
 - React 19's lint rule `react-hooks/set-state-in-effect` rejects synchronous setState in effects: key a component instead of syncing props, and take one-shot requests in a microtask with a ref guard (see `studio.tsx`).
