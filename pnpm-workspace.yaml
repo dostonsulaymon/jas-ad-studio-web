@@ -1,0 +1,3 @@
+# Build scripts are opt-in under pnpm 11. unrs-resolver runs fine on its prebuilt binaries.
+allowBuilds:
+  unrs-resolver: false
