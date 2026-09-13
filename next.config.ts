@@ -10,7 +10,23 @@ import type { NextConfig } from 'next';
  */
 const API_ORIGIN = process.env.API_ORIGIN ?? 'http://127.0.0.1:3040';
 
+/**
+ * Hosts the dev server will answer for, besides localhost.
+ *
+ * Next 16 refuses dev requests from an unrecognised host, which is right: a dev server
+ * is not meant to be on the internet. A Cloudflare quick tunnel is exactly that case, so
+ * the host goes in an env var rather than the file, and is absent by default.
+ *
+ *   DEV_ALLOWED_ORIGINS=foo.trycloudflare.com pnpm dev
+ */
+const DEV_ALLOWED_ORIGINS = (process.env.DEV_ALLOWED_ORIGINS ?? '')
+  .split(',')
+  .map((host) => host.trim())
+  .filter(Boolean);
+
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['localhost', '127.0.0.1', ...DEV_ALLOWED_ORIGINS],
+
   async rewrites() {
     if (process.env.NODE_ENV === 'production') return [];
     return [{ source: '/api/:path*', destination: `${API_ORIGIN}/api/:path*` }];
