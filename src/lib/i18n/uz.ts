@@ -165,7 +165,7 @@ export const uz = {
       {
         title: 'Qancha vaqt saqlaymiz',
         body: [
-          'Rasmlar, maʼlumotlar va tayyor promptlar hozircha muddatsiz saqlanadi. Loyihani oʻchirsangiz, u roʻyxatingizdan yoʻqoladi, lekin fayllar serverdan darhol oʻchirilmaydi. Ularni butunlay oʻchirishni quyidagi manzil orqali soʻrashingiz mumkin. Xavfsizlik va hisob-kitob uchun zarur boʻlgan minimal yozuvlar, masalan kredit harakatlari, saqlanib qoladi.',
+          'Rasmlar, maʼlumotlar va tayyor promptlar hozircha muddatsiz saqlanadi. Loyihani oʻchirsangiz, uning rasmlari, brif matni va tayyor promptlari serverdan darhol oʻchiriladi; zaxira nusxalarda ular 14 kungacha qolishi mumkin. Hisobingizni butunlay oʻchirishni quyidagi manzil orqali soʻrashingiz mumkin. Xavfsizlik va hisob-kitob uchun zarur boʻlgan minimal yozuvlar, masalan kredit harakatlari, saqlanib qoladi.',
         ],
       },
       {
@@ -445,7 +445,11 @@ export const uz = {
     target_mismatch: { message: 'Natija tanlangan oʻlcham yoki davomiylikka mos kelmadi.', action: 'Qaytadan urinish', detail: 'Limitingiz sarflanmadi.' },
     reference_conflict: { message: 'Rasmlar bir xil mahsulotga oʻxshamadi.', action: 'Rasmlarni tekshirish', detail: 'Bir xil model va variant yuboring.' },
     rate_limited: { message: 'Juda tez-tez soʻraldi.', action: 'Bir ozdan soʻng urinish', detail: '' },
-    spend_cap_reached: { message: 'Bugungi chegara tugadi.', action: 'Ertaga urinish', detail: '' },
+    spend_cap_reached: {
+      message: 'AI chegarasiga yetildi.',
+      action: 'Bir necha soatdan soʻng urinish',
+      detail: 'Chegara soʻnggi 24 soat boʻyicha hisoblanadi. Limitingiz sarflanmadi.',
+    },
     order_not_found: { message: 'Buyurtma topilmadi.', action: 'Buyurtmalarni koʻrish', detail: '' },
     order_not_pending: { message: 'Bu buyurtma allaqachon koʻrib chiqilgan.', action: 'Holatni yangilash', detail: '' },
     pack_not_available: { message: 'Bu paket hozir mavjud emas.', action: 'Boshqa paketni tanlash', detail: '' },

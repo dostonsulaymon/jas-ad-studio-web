@@ -527,7 +527,7 @@ export interface paths {
         get: operations["ProjectsController_get"];
         put?: never;
         post?: never;
-        /** Soft-delete. Its photos stop being served too (D-068). */
+        /** Delete: the brief, photos and generated packages are removed (D-021). Generation and ledger rows stay. */
         delete: operations["ProjectsController_remove"];
         options?: never;
         head?: never;
