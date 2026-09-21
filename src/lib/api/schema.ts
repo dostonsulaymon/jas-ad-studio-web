@@ -774,6 +774,7 @@ export interface components {
             /** @enum {string} */
             promptAccess: "free" | "pro";
             promptEn: string;
+            referencePhotoUrl: string | null;
             slug: string;
             sourceNote: string;
             /** @enum {string} */
@@ -806,6 +807,8 @@ export interface components {
              */
             promptAccess: "free" | "pro";
             promptEn: string;
+            /** @default null */
+            referencePhotoPath: string | null;
             slug: string;
             sortOrder: number;
             sourceNote: string;
@@ -827,6 +830,7 @@ export interface components {
                 posterUrl: string;
                 /** @enum {string} */
                 promptAccess: "free" | "pro";
+                referencePhotoUrl: string | null;
                 slug: string;
                 sourceNote: string;
                 /** @enum {string} */
@@ -938,6 +942,8 @@ export interface components {
              */
             promptAccess: "free" | "pro";
             promptEn: string;
+            /** @default null */
+            referencePhotoPath: string | null;
             slug: string;
             sortOrder: number;
             sourceNote: string;
@@ -973,6 +979,8 @@ export interface components {
                  */
                 promptAccess: "free" | "pro";
                 promptEn: string;
+                /** @default null */
+                referencePhotoPath: string | null;
                 slug: string;
                 sortOrder: number;
                 sourceNote: string;

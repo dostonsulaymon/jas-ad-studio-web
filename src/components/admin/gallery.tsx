@@ -31,6 +31,7 @@ function blank(sortOrder: number): ExampleInput {
     style: 'product-film',
     videoPath: '',
     posterPath: '',
+    referencePhotoPath: null,
     aspectRatio: '9:16',
     durationSeconds: 0,
     promptEn: '',
@@ -54,6 +55,7 @@ const FIELD_LABELS: Record<string, string> = {
   style: t.admin.gallery.style,
   videoPath: t.admin.gallery.video,
   posterPath: t.admin.gallery.poster,
+  referencePhotoPath: t.admin.gallery.referencePhoto,
   aspectRatio: t.admin.gallery.aspectRatio,
   durationSeconds: t.admin.gallery.duration,
   sortOrder: t.admin.gallery.sortOrder,
@@ -330,6 +332,29 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
               )}
               <div className="mt-3">
                 <MediaUpload accept="image/jpeg,image/webp" label={draft.posterPath ? t.admin.gallery.replace : t.admin.gallery.upload} onUploaded={(path) => change({ posterPath: path })} onError={setError} />
+              </div>
+            </div>
+            <div className="rounded-input border border-line bg-bg p-4">
+              <p className="text-[14px] font-semibold">{t.admin.gallery.referencePhoto}</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-muted">{t.admin.gallery.referencePhotoHelp}</p>
+              {draft.referencePhotoPath ? (
+                // eslint-disable-next-line @next/next/no-img-element -- owner media through the API proxy
+                <img src={media(draft.referencePhotoPath)} alt="" className="mt-3 size-20 rounded-[8px] object-cover" />
+              ) : (
+                <p className="mt-2 text-[13px] text-muted">{t.admin.gallery.noFile}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <MediaUpload
+                  accept="image/jpeg,image/webp"
+                  label={draft.referencePhotoPath ? t.admin.gallery.replace : t.admin.gallery.upload}
+                  onUploaded={(path) => change({ referencePhotoPath: path })}
+                  onError={setError}
+                />
+                {draft.referencePhotoPath ? (
+                  <button type="button" onClick={() => change({ referencePhotoPath: null })} className={button({ variant: 'ghost', size: 'sm' })}>
+                    {t.admin.gallery.removePhoto}
+                  </button>
+                ) : null}
               </div>
             </div>
             <div className={`rounded-input border bg-bg p-4 ${problem('videoPath') ? 'border-danger' : 'border-line'}`}>

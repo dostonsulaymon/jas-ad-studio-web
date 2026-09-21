@@ -5,7 +5,7 @@ import type { GalleryCard } from './api/types.ts';
 
 const card = (over: Partial<GalleryCard>): GalleryCard => ({
   id: 'x', slug: 'x', titleUz: 'X', category: 'kiyim', style: 'product-film', videoUrl: '', posterUrl: '',
-  aspectRatio: '9:16', durationSeconds: 10, conceptUz: '', sourceType: 'app-prompt', sourceNote: '', promptAccess: 'free', ...over,
+  aspectRatio: '9:16', durationSeconds: 10, conceptUz: '', sourceType: 'app-prompt', sourceNote: '', promptAccess: 'free', referencePhotoUrl: null, ...over,
 });
 
 const cards = [
