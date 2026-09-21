@@ -66,7 +66,18 @@ export const uz = {
     copied: 'Nusxalandi',
     copyFailed: 'Nusxalab boʻlmadi. Pastdagi matnni belgilab, qoʻlda nusxalang.',
     loading: 'Yuklanmoqda',
-    free: 'Misollar va ularning promptlari bepul, kirishsiz ishlaydi.',
+    free: 'Bu misol va uning prompti bepul, kirishsiz ishlaydi.',
+
+    accessGroup: 'Narx',
+    accessFree: 'Bepul',
+    accessPaid: 'Pullik',
+    proBadge: 'PRO',
+    proCardAction: 'PRO prompt',
+    proFor: (title: string) => `"${title}" prompti PRO uchun`,
+    lockedTitle: 'Bu prompt PRO uchun',
+    lockedSignedOut: 'Koʻrish uchun avval tizimga kiring.',
+    lockedSignedIn: 'PRO kirish hozircha sayt egasi tomonidan beriladi. Pastdagi aloqa orqali yozing.',
+    lockedSignIn: 'Kirish',
 
     categories: {
       kiyim: 'Kiyim',
@@ -414,6 +425,7 @@ export const uz = {
     media_too_large: { message: 'Fayl juda katta.', action: 'Kichikroq fayl tanlang', detail: 'Video uchun 25 MB, rasm uchun 10 MB chegara.' },
     media_empty: { message: 'Fayl tanlanmadi.', action: 'Fayl tanlab, qaytadan urinib koʻring', detail: '' },
     gallery_example_not_found: { message: 'Tanlangan namuna endi mavjud emas.', action: 'Uslubni olib tashlab, qaytadan urinish', detail: 'Brifingizdagi boshqa maʼlumotlar saqlanib qoldi.' },
+    prompt_locked: { message: 'Bu prompt PRO uchun.', action: 'Yopish', detail: 'PRO kirish sayt egasi tomonidan beriladi.' },
     asset_not_found: { message: 'Rasm topilmadi.', action: 'Qaytadan yuklash', detail: '' },
     too_many_photos: { message: '4 tadan ortiq rasm yuklab boʻlmaydi.', action: 'Bittasini olib tashlang', detail: '' },
     upload_type: { message: 'Bu rasm emas.', action: 'Boshqa fayl tanlash', detail: 'JPG, PNG yoki WebP yuboring.' },
@@ -580,6 +592,10 @@ export const uz = {
       replace: 'Almashtirish',
       uploading: 'Yuklanmoqda',
       noFile: 'Fayl tanlanmagan',
+      promptAccess: 'Prompt kirishi',
+      promptAccessHelp: 'Pullik boʻlsa, promptni faqat PRO kirishi borlar ocha oladi. Video va sarlavha hammaga koʻrinadi.',
+      accessFree: 'Bepul',
+      accessPro: 'Pullik (PRO)',
       publishSection: 'Saytda chop etish uchun',
       publishSectionHelp:
         'Qoralamani faqat sarlavha bilan ham saqlash mumkin. Quyidagilar namunani saytda koʻrsatish uchun kerak.',

@@ -10,6 +10,8 @@ export interface GalleryFilter {
   query: string;
   category: GalleryCategory | null;
   style: string | null;
+  /** R-010: Bepul or Pullik, or null for both. */
+  access?: 'free' | 'pro' | null;
 }
 
 export interface GalleryLabels {
@@ -27,12 +29,18 @@ export function stylesPresent(cards: readonly GalleryCard[]): string[] {
   return [...new Set(cards.map((c) => c.style))];
 }
 
+/** The Bepul/Pullik chips appear only once the gallery actually has both kinds (R-010). */
+export function hasPaidExamples(cards: readonly GalleryCard[]): boolean {
+  return cards.some((c) => c.promptAccess === 'pro');
+}
+
 /** Client-side search (the API has none): title, category label and format label, apostrophe-blind. */
 export function filterCards(cards: readonly GalleryCard[], filter: GalleryFilter, labels: GalleryLabels): GalleryCard[] {
   const words = foldForSearch(filter.query).split(/\s+/).filter(Boolean);
   return cards.filter((card) => {
     if (filter.category && card.category !== filter.category) return false;
     if (filter.style && card.style !== filter.style) return false;
+    if (filter.access && card.promptAccess !== filter.access) return false;
     if (words.length === 0) return true;
     const haystack = foldForSearch(`${card.titleUz} ${labels.category(card.category)} ${card.category} ${labels.style(card.style)}`);
     return words.every((word) => haystack.includes(word));

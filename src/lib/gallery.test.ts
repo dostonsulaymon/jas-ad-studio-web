@@ -1,11 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aspectFromSize, categoriesPresent, filterCards, slugify, stylesPresent } from './gallery.ts';
+import { aspectFromSize, categoriesPresent, filterCards, hasPaidExamples, slugify, stylesPresent } from './gallery.ts';
 import type { GalleryCard } from './api/types.ts';
 
 const card = (over: Partial<GalleryCard>): GalleryCard => ({
   id: 'x', slug: 'x', titleUz: 'X', category: 'kiyim', style: 'product-film', videoUrl: '', posterUrl: '',
-  aspectRatio: '9:16', durationSeconds: 10, conceptUz: '', sourceType: 'app-prompt', sourceNote: '', ...over,
+  aspectRatio: '9:16', durationSeconds: 10, conceptUz: '', sourceType: 'app-prompt', sourceNote: '', promptAccess: 'free', ...over,
 });
 
 const cards = [
@@ -54,4 +54,25 @@ test('the aspect ratio of an uploaded clip is the nearest one the product suppor
   assert.equal(aspectFromSize(1080, 1080), '1:1');
   assert.equal(aspectFromSize(1024, 1080), '1:1');
   assert.equal(aspectFromSize(0, 1080), null);
+});
+
+test('the Bepul / Pullik filter splits the gallery, and combines with the others (R-010)', () => {
+  const mixed = [
+    card({ id: 'free-phone', category: 'uy-rozgor' }),
+    card({ id: 'paid-phone', category: 'uy-rozgor', promptAccess: 'pro' }),
+    card({ id: 'paid-bag', category: 'aksessuar', promptAccess: 'pro' }),
+  ];
+
+  const only = (f: Parameters<typeof filterCards>[1]) => filterCards(mixed, f, labels).map((c) => c.id);
+
+  assert.deepEqual(only({ query: '', category: null, style: null, access: 'free' }), ['free-phone']);
+  assert.deepEqual(only({ query: '', category: null, style: null, access: 'pro' }), ['paid-phone', 'paid-bag']);
+  assert.deepEqual(only({ query: '', category: 'uy-rozgor', style: null, access: 'pro' }), ['paid-phone']);
+  // No access filter means both, which is what the chips do when neither is pressed.
+  assert.equal(only({ query: '', category: null, style: null, access: null }).length, 3);
+});
+
+test('the Bepul / Pullik chips appear only once something is actually paid', () => {
+  assert.equal(hasPaidExamples(cards), false);
+  assert.equal(hasPaidExamples([...cards, card({ id: 'paid', promptAccess: 'pro' })]), true);
 });
