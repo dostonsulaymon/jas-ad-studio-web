@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { api, isApiError } from '@/lib/api/client';
-import type { Balance, CurrentUser } from '@/lib/api/types';
+import type { Balance, CurrentUser, ProStatus } from '@/lib/api/types';
 import { DRAFT_KEY, PROJECT_KEY } from '@/lib/gallery';
 import { ProjectsDrawer } from './projects-drawer';
 import { CreditsDrawer } from './credits-drawer';
@@ -14,6 +14,8 @@ interface Session {
   status: 'loading' | 'signedOut' | 'signedIn';
   user: CurrentUser | null;
   balance: Balance | null;
+  /** R-010: whether this viewer may open a PRO gallery prompt. False while loading and signed out. */
+  hasPro: boolean;
   setBalance: (balance: Balance) => void;
   refreshBalance: () => void;
   openCredits: () => void;
@@ -40,6 +42,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [creditsOpen, setCreditsOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [requestedProjectId, setRequestedProjectId] = useState<string | null>(null);
+  const [hasPro, setHasPro] = useState(false);
 
   const refreshBalance = useCallback(() => {
     api
@@ -66,6 +69,22 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       });
     return () => controller.abort();
   }, [refreshBalance]);
+
+  /**
+   * Asked separately from `/api/me`, and asked even when signed out: the route answers
+   * `hasPro: false` rather than 401, so the gallery renders the same way in both cases
+   * instead of treating "not signed in" as an error to recover from.
+   */
+  useEffect(() => {
+    const controller = new AbortController();
+    api
+      .get<ProStatus>('/api/pro/me', { signal: controller.signal })
+      .then((pro) => setHasPro(pro.hasPro))
+      .catch(() => {
+        /* no PRO is the safe answer, and the locked panel explains itself */
+      });
+    return () => controller.abort();
+  }, []);
 
   const signOut = useCallback(async () => {
     try {
@@ -98,6 +117,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<Session>(
     () => ({
+      hasPro,
       status,
       user,
       balance,
@@ -110,7 +130,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       openProject,
       clearRequestedProject: () => setRequestedProjectId(null),
     }),
-    [status, user, balance, refreshBalance, signOut, requestedProjectId, openProject],
+    [status, user, balance, refreshBalance, signOut, requestedProjectId, openProject, hasPro],
   );
 
   return (

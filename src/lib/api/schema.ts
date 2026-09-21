@@ -1,5 +1,5 @@
 /**
- * GENERATED from jas-ad-studio-api/openapi.json (35 paths). Do not edit.
+ * GENERATED from jas-ad-studio-api/openapi.json (37 paths). Do not edit.
  * Regenerate with `pnpm api:generate`.
  */
 
@@ -144,7 +144,7 @@ export interface paths {
         };
         /**
          * One published example, with its English prompt. Works signed out.
-         * @description An unpublished slug is a 404, never a 403 — a 403 confirms it exists.
+         * @description An unpublished slug is a 404, never a 403 — a 403 confirms it exists. A PRO example IS a 403 (PROMPT_LOCKED): its badge already says it exists.
          */
         get: operations["GalleryController_get"];
         put?: never;
@@ -396,6 +396,23 @@ export interface paths {
         patch: operations["OwnerController_setPack"];
         trace?: never;
     };
+    "/api/owner/pro": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Give a seller PRO access until a date. The note is required. */
+        post: operations["OwnerController_grantPro"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/owner/settings/hero-photos": {
         parameters: {
             query?: never;
@@ -490,6 +507,23 @@ export interface paths {
         };
         /** Packs for sale. Empty until the owner prices and activates one (A8). */
         get: operations["CreditsController_listPacks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pro/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether this caller may open PRO prompts. Works signed out. */
+        get: operations["ProController_status"];
         put?: never;
         post?: never;
         delete?: never;
@@ -737,6 +771,8 @@ export interface components {
             durationSeconds: number;
             id: string;
             posterUrl: string;
+            /** @enum {string} */
+            promptAccess: "free" | "pro";
             promptEn: string;
             slug: string;
             sourceNote: string;
@@ -764,6 +800,11 @@ export interface components {
             flowModel: string | null;
             isPublished: boolean;
             posterPath: string;
+            /**
+             * @default free
+             * @enum {string}
+             */
+            promptAccess: "free" | "pro";
             promptEn: string;
             slug: string;
             sortOrder: number;
@@ -784,6 +825,8 @@ export interface components {
                 durationSeconds: number;
                 id: string;
                 posterUrl: string;
+                /** @enum {string} */
+                promptAccess: "free" | "pro";
                 slug: string;
                 sourceNote: string;
                 /** @enum {string} */
@@ -889,6 +932,11 @@ export interface components {
             id: string;
             isPublished: boolean;
             posterPath: string;
+            /**
+             * @default free
+             * @enum {string}
+             */
+            promptAccess: "free" | "pro";
             promptEn: string;
             slug: string;
             sortOrder: number;
@@ -919,6 +967,11 @@ export interface components {
                 id: string;
                 isPublished: boolean;
                 posterPath: string;
+                /**
+                 * @default free
+                 * @enum {string}
+                 */
+                promptAccess: "free" | "pro";
                 promptEn: string;
                 slug: string;
                 sortOrder: number;
@@ -1005,6 +1058,13 @@ export interface components {
              */
             paymeUrl: string | null;
         };
+        ProGrantDto: {
+            note: string;
+            /** Format: date-time */
+            until: string;
+            /** Format: uuid */
+            userId: string;
+        };
         ProjectDetailDto: {
             aspectRatio: string;
             brief: {
@@ -1050,6 +1110,11 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+        };
+        ProStatusDto: {
+            hasPro: boolean;
+            /** Format: date-time */
+            until: string | null;
         };
         PublicSettingsDto: {
             heroPhotos: {
@@ -1270,6 +1335,13 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["GalleryExampleDto"];
                 };
+            };
+            /** @description The prompt is PRO and this caller has no access. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1652,6 +1724,29 @@ export interface operations {
             };
         };
     };
+    OwnerController_grantPro: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProGrantDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProStatusDto"];
+                };
+            };
+        };
+    };
     OwnerController_setHeroPhotos: {
         parameters: {
             query?: never;
@@ -1774,6 +1869,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CreditPackDto"][];
+                };
+            };
+        };
+    };
+    ProController_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProStatusDto"];
                 };
             };
         };

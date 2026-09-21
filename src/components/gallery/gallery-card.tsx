@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
-import { Pause, Play, TextAlignLeft } from '@phosphor-icons/react';
+import { Lock, Pause, Play, TextAlignLeft } from '@phosphor-icons/react';
 import { button } from '../ui/button';
 import type { GalleryCard } from '@/lib/api/types';
 import { t } from '@/lib/i18n';
 import { categoryLabel, styleLabel } from './explorer';
+import { useSession } from '../session';
 
 const RATIO: Record<GalleryCard['aspectRatio'], string> = { '9:16': '9 / 16', '16:9': '16 / 9', '1:1': '1 / 1' };
 
@@ -51,6 +52,10 @@ export function GalleryCardView({
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
   const titleId = useId();
+
+  const session = useSession();
+  /** R-010: the clip and the title stay public; only the prompt is behind PRO. */
+  const locked = card.promptAccess === 'pro' && !session.hasPro;
 
   const reducedMotion = usePrefersReducedMotion();
   const [armed, setArmed] = useState(false);
@@ -135,6 +140,11 @@ export function GalleryCardView({
           {shouldPlay ? <Pause size={18} weight="fill" aria-hidden /> : <Play size={18} weight="fill" aria-hidden />}
           <span className="sr-only">{shouldPlay ? t.gallery.pause(card.titleUz) : t.gallery.play(card.titleUz)}</span>
         </button>
+        {card.promptAccess === 'pro' ? (
+          <span className="absolute top-3 right-3 inline-flex h-7 items-center rounded-full border border-white/20 bg-black/65 px-2.5 text-[11px] font-bold tracking-[0.1em] text-ink backdrop-blur-sm">
+            {t.gallery.proBadge}
+          </span>
+        ) : null}
       </div>
 
       <div className="mt-3 px-0.5">
@@ -149,10 +159,11 @@ export function GalleryCardView({
           type="button"
           onClick={onOpenPrompt}
           aria-describedby={titleId}
+          aria-label={locked ? t.gallery.proFor(card.titleUz) : undefined}
           className={button({ variant: 'outline', size: 'sm', className: 'mt-3 max-sm:w-full' })}
         >
-          <TextAlignLeft size={16} aria-hidden />
-          {t.gallery.promptAction}
+          {locked ? <Lock size={16} aria-hidden /> : <TextAlignLeft size={16} aria-hidden />}
+          {locked ? t.gallery.proCardAction : t.gallery.promptAction}
         </button>
       </div>
     </li>

@@ -38,6 +38,7 @@ function blank(sortOrder: number): ExampleInput {
     creativePreset: { environment: '', lighting: '', cameraLanguage: '', pacing: '', mood: '' },
     sourceType: 'app-prompt',
     sourceNote: '',
+    promptAccess: 'free',
     flowModel: null,
     flowMode: null,
     isPublished: false,
@@ -59,6 +60,7 @@ const FIELD_LABELS: Record<string, string> = {
   promptEn: t.admin.gallery.promptEn,
   conceptUz: t.admin.gallery.conceptUz,
   sourceNote: t.admin.gallery.sourceNote,
+  promptAccess: t.admin.gallery.promptAccess,
   flowModel: t.admin.gallery.flowModel,
   flowMode: t.admin.gallery.flowMode,
   'creativePreset.environment': t.admin.gallery.environment,
@@ -132,8 +134,9 @@ export function AdminGallery() {
                     <p className="mt-0.5 truncate text-[13px] text-muted">
                       {t.gallery.categories[example.category]} · {t.format[example.style as keyof typeof t.format]?.label ?? example.style} · {example.slug}
                     </p>
-                    <div className="mt-2">
+                    <div className="mt-2 flex flex-wrap gap-2">
                       <StatusPill tone={example.isPublished ? 'success' : 'neutral'}>{example.isPublished ? t.admin.gallery.published : t.admin.gallery.draft}</StatusPill>
+                      {example.promptAccess === 'pro' ? <StatusPill tone="neutral">{t.gallery.proBadge}</StatusPill> : null}
                     </div>
                   </div>
                   {confirming !== example.id ? (
@@ -282,6 +285,19 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
             </Field>
             <Field label={t.admin.gallery.sortOrder}>
               {({ id: fieldId }) => <TextInput id={fieldId} type="number" value={draft.sortOrder} onChange={(e) => change({ sortOrder: Number(e.target.value) })} />}
+            </Field>
+            <Field label={t.admin.gallery.promptAccess} help={t.admin.gallery.promptAccessHelp}>
+              {({ id: fieldId, describedBy }) => (
+                <Select
+                  id={fieldId}
+                  aria-describedby={describedBy}
+                  value={draft.promptAccess}
+                  onChange={(e) => change({ promptAccess: e.target.value as ExampleInput['promptAccess'] })}
+                >
+                  <option value="free">{t.admin.gallery.accessFree}</option>
+                  <option value="pro">{t.admin.gallery.accessPro}</option>
+                </Select>
+              )}
             </Field>
             <Field label={t.admin.gallery.sourceType}>
               {({ id: fieldId }) => (

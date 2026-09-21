@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Copy, Sparkle } from '@phosphor-icons/react';
+import { Check, Copy, Lock, Sparkle } from '@phosphor-icons/react';
 import { Sheet, SheetHeader } from '../ui/sheet';
 import { button } from '../ui/button';
 import { ErrorNotice } from '../ui/error-notice';
@@ -11,6 +11,7 @@ import { copyText } from '@/lib/generation';
 import type { GalleryCard, GalleryExample } from '@/lib/api/types';
 import { t } from '@/lib/i18n';
 import { categoryLabel, styleLabel } from './explorer';
+import { useSession } from '../session';
 
 /**
  * The example's prompt, fetched when the sheet opens (the list payload carries none). Copy puts the
@@ -19,6 +20,13 @@ import { categoryLabel, styleLabel } from './explorer';
  */
 export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () => void }) {
   const router = useRouter();
+  const session = useSession();
+  /**
+   * R-010: a locked prompt is never asked for. The API would refuse it anyway — that refusal is
+   * the enforcement — but firing a request we know answers 403 would put an error in the console
+   * on a perfectly ordinary screen.
+   */
+  const locked = card.promptAccess === 'pro' && !session.hasPro;
   const titleId = useId();
   const [example, setExample] = useState<GalleryExample | null>(null);
   const [error, setError] = useState<unknown>(null);
@@ -27,6 +35,7 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
   const pre = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
+    if (locked) return;
     const controller = new AbortController();
     readGalleryExample(card.slug, controller.signal)
       .then(setExample)
@@ -34,7 +43,7 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
         if (!controller.signal.aborted) setError(cause);
       });
     return () => controller.abort();
-  }, [card.slug, attempt]);
+  }, [card.slug, attempt, locked]);
 
   const onCopy = useCallback(async () => {
     if (!example) return;
@@ -62,7 +71,20 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
         <p className="mt-2 text-[13.5px] text-muted">{card.sourceNote}</p>
 
         <p className="mt-6 mb-2 text-[13px] font-semibold text-muted">{t.gallery.sheetPromptLabel}</p>
-        {error ? (
+        {locked ? (
+          <div className="rounded-input border border-line bg-bg px-5 py-8 text-center">
+            <Lock size={24} aria-hidden className="mx-auto text-muted" />
+            <p className="mt-3 text-[17px] font-bold tracking-[-0.01em]">{t.gallery.lockedTitle}</p>
+            <p className="mx-auto mt-2 max-w-[38ch] text-[14px] leading-snug text-muted">
+              {session.status === 'signedIn' ? t.gallery.lockedSignedIn : t.gallery.lockedSignedOut}
+            </p>
+            {session.status === 'signedIn' ? null : (
+              <a href="/api/auth/google" className={button({ variant: 'solid', size: 'md', className: 'mt-5' })}>
+                {t.gallery.lockedSignIn}
+              </a>
+            )}
+          </div>
+        ) : error ? (
           <ErrorNotice
             error={error}
             onRetry={() => {
@@ -92,10 +114,12 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
           {copy === 'failed' ? t.gallery.copyFailed : copy === 'ok' ? t.gallery.copied : ''}
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
+          {locked ? null : (
           <button type="button" onClick={() => void onCopy()} disabled={!example} className={button({ variant: 'solid', size: 'md', className: 'sm:flex-1' })}>
             {copy === 'ok' ? <Check size={18} weight="bold" aria-hidden className="text-success" /> : <Copy size={18} aria-hidden />}
             {copy === 'ok' ? t.gallery.copied : t.gallery.copy}
           </button>
+          )}
           <button
             type="button"
             onClick={() => {
@@ -108,7 +132,7 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
             {t.gallery.useStyle}
           </button>
         </div>
-        <p className="mt-3 text-[12.5px] leading-snug text-muted">{t.gallery.free}</p>
+        {locked ? null : <p className="mt-3 text-[12.5px] leading-snug text-muted">{t.gallery.free}</p>}
       </div>
     </Sheet>
   );

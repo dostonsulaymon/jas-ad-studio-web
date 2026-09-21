@@ -6,14 +6,20 @@ import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { GalleryCardView } from './gallery-card';
 import { PromptSheet } from './prompt-sheet';
 import { button } from '../ui/button';
-import { categoriesPresent, filterCards, stylesPresent } from '@/lib/gallery';
+import { categoriesPresent, filterCards, hasPaidExamples, stylesPresent } from '@/lib/gallery';
 import type { GalleryCard, GalleryCategory } from '@/lib/api/types';
 import { t } from '@/lib/i18n';
 
 /**
  * R-011: the gallery runs to 1600px so a full page of examples uses the screen. With three of them
  * it would otherwise leave a hole where the fourth column should be, which reads as broken rather
- * than as empty. So the row never has more columns than it has cards, and a short row is centred.
+ * than as empty. So the grid never has more columns than the gallery has cards, and the whole block
+ * is centred on the page.
+ *
+ * The column count comes from `cards.length`, the gallery's whole size, and never from `shown` —
+ * the filtered result. Deriving it from the filtered count centred each result on its own width, so
+ * picking a category appeared to leave a card floating where it had been instead of moving it to the
+ * front of the row. A filtered result now flows from the first slot, under the chips, like any grid.
  *
  * The space either side of three cards is a content problem, not a layout one (Q-04): publish more
  * examples and it closes. What this stops is the *lopsided* gap.
@@ -44,22 +50,25 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<GalleryCategory | null>(null);
   const [style, setStyle] = useState<string | null>(null);
+  const [access, setAccess] = useState<'free' | 'pro' | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [openCard, setOpenCard] = useState<GalleryCard | null>(null);
   const galleryRef = useRef<HTMLElement>(null);
 
   const categories = useMemo(() => categoriesPresent(cards), [cards]);
   const styles = useMemo(() => stylesPresent(cards), [cards]);
+  const paidPresent = useMemo(() => hasPaidExamples(cards), [cards]);
   const shown = useMemo(
-    () => filterCards(cards, { query, category, style }, { category: categoryLabel, style: styleLabel }),
-    [cards, query, category, style],
+    () => filterCards(cards, { query, category, style, access }, { category: categoryLabel, style: styleLabel }),
+    [cards, query, category, style, access],
   );
-  const filtered = query.trim() !== '' || category !== null || style !== null;
+  const filtered = query.trim() !== '' || category !== null || style !== null || access !== null;
 
   const clear = () => {
     setQuery('');
     setCategory(null);
     setStyle(null);
+    setAccess(null);
   };
 
   return (
@@ -147,6 +156,16 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
                       ))}
                     </ChipRow>
                   ) : null}
+                  {paidPresent ? (
+                    <ChipRow label={t.gallery.accessGroup}>
+                      <Chip active={access === 'free'} onClick={() => setAccess(access === 'free' ? null : 'free')}>
+                        {t.gallery.accessFree}
+                      </Chip>
+                      <Chip active={access === 'pro'} onClick={() => setAccess(access === 'pro' ? null : 'pro')}>
+                        {t.gallery.accessPaid}
+                      </Chip>
+                    </ChipRow>
+                  ) : null}
                   <p className="shrink-0 text-[14px] text-muted tabular-nums" aria-live="polite">
                     {t.gallery.count(shown.length)}
                   </p>
@@ -164,10 +183,7 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
                   ) : null}
                 </div>
               ) : (
-                <ul
-                  style={{ maxWidth: widthFor(shown.length) }}
-                  className={`mx-auto mt-8 grid gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 ${GRID_COLUMNS[columnsFor(shown.length)]}`}
-                >
+                <ul className={`mt-8 grid gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 ${GRID_COLUMNS[columnsFor(cards.length)]}`}>
                   {shown.map((card) => (
                     <GalleryCardView
                       key={card.id}
