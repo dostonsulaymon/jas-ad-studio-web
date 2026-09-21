@@ -60,6 +60,14 @@ export function GalleryCardView({
   const autoplays = !reducedMotion;
   const shouldPlay = autoplays ? inView && !pausedByViewer : playing;
 
+  /**
+   * A clip that plays by itself must still be stoppable (WCAG 2.2.2: motion that starts on its own
+   * and runs past five seconds needs a way to pause it), and under reduced motion this is the only
+   * way to start one. So the control stays — it just gets out of the way while the clip is playing,
+   * on pointer devices, where hover and focus bring it back. On touch there is no hover, so it stays.
+   */
+  const quiet = autoplays && shouldPlay;
+
   useEffect(() => {
     const el = frame.current;
     if (!el) return;
@@ -120,7 +128,9 @@ export function GalleryCardView({
           type="button"
           onClick={toggle}
           aria-pressed={shouldPlay}
-          className="absolute bottom-3 left-3 grid size-11 place-items-center rounded-full border border-white/15 bg-black/60 text-ink backdrop-blur-sm transition-colors duration-150 hover:bg-black/80"
+          className={`absolute bottom-3 left-3 grid size-11 place-items-center rounded-full border border-white/15 bg-black/60 text-ink backdrop-blur-sm transition-[opacity,background-color] duration-200 hover:bg-black/80 ${
+            quiet ? '[@media(hover:hover)]:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100' : ''
+          }`}
         >
           {shouldPlay ? <Pause size={18} weight="fill" aria-hidden /> : <Play size={18} weight="fill" aria-hidden />}
           <span className="sr-only">{shouldPlay ? t.gallery.pause(card.titleUz) : t.gallery.play(card.titleUz)}</span>
