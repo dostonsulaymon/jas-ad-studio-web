@@ -31,7 +31,7 @@ function HeroCopy() {
       <p className="inline-flex h-7 items-center rounded-full border border-line bg-raised px-3 text-[11px] font-medium tracking-[0.16em] text-muted uppercase">
         {t.hero.badge}
       </p>
-      <h1 className="mx-auto mt-6 max-w-[13em] text-[clamp(38px,5.6vw,78px)] leading-[0.98] font-black tracking-[-0.045em] text-balance">
+      <h1 className="mx-auto mt-6 max-w-[13em] text-[clamp(38px,5.6vw,78px)] leading-[1.06] font-black tracking-[-0.04em] text-balance">
         {t.hero.headline}
       </h1>
       <p className="mx-auto mt-6 max-w-[42ch] text-[17px] leading-[1.5] text-pretty text-muted sm:text-[19px]">{t.hero.sub}</p>

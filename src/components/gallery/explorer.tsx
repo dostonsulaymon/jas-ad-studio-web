@@ -10,6 +10,29 @@ import { categoriesPresent, filterCards, stylesPresent } from '@/lib/gallery';
 import type { GalleryCard, GalleryCategory } from '@/lib/api/types';
 import { t } from '@/lib/i18n';
 
+/**
+ * R-011: the gallery runs to 1600px so a full page of examples uses the screen. With three of them
+ * it would otherwise leave a hole where the fourth column should be, which reads as broken rather
+ * than as empty. So the row never has more columns than it has cards, and a short row is centred.
+ *
+ * The space either side of three cards is a content problem, not a layout one (Q-04): publish more
+ * examples and it closes. What this stops is the *lopsided* gap.
+ */
+const CARD_WIDTH = 340;
+const GAP = 20;
+
+const GRID_COLUMNS: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-2 md:grid-cols-3',
+  4: 'grid-cols-2 md:grid-cols-3 xl:grid-cols-4',
+  5: 'grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5',
+};
+
+const columnsFor = (cards: number) => Math.min(Math.max(cards, 1), 5);
+
+const widthFor = (cards: number) => columnsFor(cards) * CARD_WIDTH + (columnsFor(cards) - 1) * GAP;
+
 export const categoryLabel = (c: GalleryCategory) => t.gallery.categories[c] ?? c;
 export const styleLabel = (s: string) => t.format[s as keyof typeof t.format]?.label ?? s;
 
@@ -41,7 +64,7 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
 
   return (
     <>
-      <section className="px-4 pt-14 pb-12 text-center sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
+      <section className="px-4 pt-14 pb-8 text-center sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
         <div className="mx-auto max-w-[1040px]">
           {hero}
           <form
@@ -82,19 +105,13 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
         </div>
       </section>
 
-      <section ref={galleryRef} id="galereya" aria-labelledby="galereya-title" className="px-4 pt-6 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-[1320px]">
-          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-            <h2 id="galereya-title" className="text-[clamp(30px,3.4vw,46px)] leading-[1.05] font-extrabold tracking-[-0.035em]">
-              {t.gallery.title}
-            </h2>
-            {cards.length > 0 ? (
-              <p className="text-[14px] text-muted tabular-nums" aria-live="polite">
-                {t.gallery.count(shown.length)}
-              </p>
-            ) : null}
-          </div>
-          <p className="mt-3 max-w-[60ch] text-muted">{t.gallery.lead}</p>
+      <section ref={galleryRef} id="galereya" aria-labelledby="galereya-title" className="px-4 pt-2 pb-24 sm:px-6 sm:pt-4 lg:px-8">
+        <div className="mx-auto max-w-[1600px]">
+          {/* R-012: the visible heading and lead are gone so the gallery sits under the hero, but the
+              section still needs an accessible name, and the count is the only feedback filtering gives. */}
+          <h2 id="galereya-title" className="sr-only">
+            {t.gallery.title}
+          </h2>
 
           {cards.length === 0 ? (
             <div className="mt-10 rounded-card border border-dashed border-line-strong px-6 py-14 text-center">
@@ -105,8 +122,8 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
               </Link>
             </div>
           ) : (
-            <>
-              <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="mx-auto" style={{ maxWidth: widthFor(cards.length) }}>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <ChipRow label={t.gallery.categoryGroup}>
                   <Chip active={category === null} onClick={() => setCategory(null)}>
                     {t.gallery.allCategories}
@@ -117,18 +134,23 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
                     </Chip>
                   ))}
                 </ChipRow>
-                {styles.length > 1 ? (
-                  <ChipRow label={t.gallery.formatGroup}>
-                    <Chip active={style === null} onClick={() => setStyle(null)}>
-                      {t.gallery.allFormats}
-                    </Chip>
-                    {styles.map((s) => (
-                      <Chip key={s} active={style === s} onClick={() => setStyle(style === s ? null : s)}>
-                        {styleLabel(s)}
+                <div className="flex items-center justify-between gap-4 lg:justify-end">
+                  {styles.length > 1 ? (
+                    <ChipRow label={t.gallery.formatGroup}>
+                      <Chip active={style === null} onClick={() => setStyle(null)}>
+                        {t.gallery.allFormats}
                       </Chip>
-                    ))}
-                  </ChipRow>
-                ) : null}
+                      {styles.map((s) => (
+                        <Chip key={s} active={style === s} onClick={() => setStyle(style === s ? null : s)}>
+                          {styleLabel(s)}
+                        </Chip>
+                      ))}
+                    </ChipRow>
+                  ) : null}
+                  <p className="shrink-0 text-[14px] text-muted tabular-nums" aria-live="polite">
+                    {t.gallery.count(shown.length)}
+                  </p>
+                </div>
               </div>
 
               {shown.length === 0 ? (
@@ -142,7 +164,10 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
                   ) : null}
                 </div>
               ) : (
-                <ul className="mt-8 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 md:grid-cols-3 xl:grid-cols-4">
+                <ul
+                  style={{ maxWidth: widthFor(shown.length) }}
+                  className={`mx-auto mt-8 grid gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 ${GRID_COLUMNS[columnsFor(shown.length)]}`}
+                >
                   {shown.map((card) => (
                     <GalleryCardView
                       key={card.id}
@@ -158,7 +183,7 @@ export function Explorer({ cards, hero }: { cards: GalleryCard[]; hero: React.Re
                   ))}
                 </ul>
               )}
-            </>
+            </div>
           )}
         </div>
       </section>

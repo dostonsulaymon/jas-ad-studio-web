@@ -56,3 +56,33 @@ export function rememberInspiration(choice: { id: string; titleUz: string }): vo
     /* blocked storage: the studio still opens, without the style */
   }
 }
+
+/**
+ * A slug from an Uzbek title (R-015). The owner should not have to invent one by hand, and the API
+ * refuses anything but `a-z0-9-`. Uzbek Latin is ASCII apart from its two modifier letters, so
+ * `oʻ` and `gʻ` become `o` and `g` rather than disappearing with the letter they belong to.
+ */
+export function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[ʻʼ‘’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80)
+    .replace(/-+$/, '');
+}
+
+const ASPECT_BY_RATIO: readonly { ratio: number; value: '9:16' | '1:1' | '16:9' }[] = [
+  { ratio: 9 / 16, value: '9:16' },
+  { ratio: 1, value: '1:1' },
+  { ratio: 16 / 9, value: '16:9' },
+];
+
+/** The closest ratio the product supports, so an uploaded clip fills the field in for the owner. */
+export function aspectFromSize(width: number, height: number): '9:16' | '1:1' | '16:9' | null {
+  if (!(width > 0) || !(height > 0)) return null;
+  const actual = width / height;
+  return ASPECT_BY_RATIO.reduce((best, candidate) =>
+    Math.abs(candidate.ratio - actual) < Math.abs(best.ratio - actual) ? candidate : best,
+  ).value;
+}

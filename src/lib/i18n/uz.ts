@@ -40,7 +40,6 @@ export const uz = {
 
   gallery: {
     title: 'Reklama misollari',
-    lead: 'Videoni koʻring, ishlatilgan promptni oching yoki shu yoʻnalishdan mahsulotingiz uchun foydalaning.',
     count: (n: number) => `${n} ta video`,
     categoryGroup: 'Toifa',
     formatGroup: 'Format',
@@ -581,6 +580,10 @@ export const uz = {
       replace: 'Almashtirish',
       uploading: 'Yuklanmoqda',
       noFile: 'Fayl tanlanmagan',
+      publishSection: 'Saytda chop etish uchun',
+      publishSectionHelp:
+        'Qoralamani faqat sarlavha bilan ham saqlash mumkin. Quyidagilar namunani saytda koʻrsatish uchun kerak.',
+      fieldRequired: 'Toʻldirilishi shart.',
     },
 
     hero: {

@@ -11,13 +11,33 @@ test.beforeEach(async ({ page }) => {
   test.skip(count === 0, 'no published gallery examples on this API');
 });
 
-test('the gallery renders published examples with provenance, videos never preloaded', async ({ page }) => {
+test('a card downloads and plays its clip only once it has been seen (R-013)', async ({ page }) => {
   const cards = page.locator('#galereya ul > li');
-  await expect(cards.first()).toBeVisible();
   const video = cards.first().locator('video');
   await expect(video).toHaveAttribute('preload', 'none');
-  expect(await video.evaluate((v: HTMLVideoElement) => v.autoplay)).toBe(false);
+
+  // Nothing is fetched for a card the visitor has not reached yet: the src is attached on the first
+  // intersection, which is what keeps `preload="none"` honest as the gallery grows.
+  const seenOnLoad = await video.evaluate((v: HTMLVideoElement) => {
+    const box = v.getBoundingClientRect();
+    return box.top < window.innerHeight && box.bottom > 0;
+  });
+  if (!seenOnLoad) expect(await video.getAttribute('src')).toBe(null);
+
+  await cards.first().scrollIntoViewIfNeeded();
+  await expect(video).toHaveJSProperty('muted', true);
+  await expect(video).toHaveJSProperty('paused', false);
+  expect(await video.getAttribute('src')).not.toBe(null);
   await expect(cards.first().getByText(/namuna/i)).toBeVisible();
+});
+
+test('a clip that scrolls off screen stops playing', async ({ page }) => {
+  const video = page.locator('#galereya ul > li').first().locator('video');
+  await video.scrollIntoViewIfNeeded();
+  await expect(video).toHaveJSProperty('paused', false);
+
+  await page.locator('footer').scrollIntoViewIfNeeded();
+  await expect(video).toHaveJSProperty('paused', true);
 });
 
 test('search filters the gallery client-side, and an empty result offers a way back', async ({ page }) => {

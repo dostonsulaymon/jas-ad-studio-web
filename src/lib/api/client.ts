@@ -105,4 +105,5 @@ export function uploadWithProgress<T>(
   return { promise, abort: () => xhr.abort() };
 }
 
-export { ApiError, isApiError, isAbort } from './errors.ts';
+export { ApiError, fieldIssues, isApiError, isAbort } from './errors.ts';
+export type { FieldIssue } from './errors.ts';

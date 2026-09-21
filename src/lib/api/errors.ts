@@ -29,6 +29,28 @@ export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
 }
 
+/** One field the API refused, as `ApiErrorFilter` reports a zod failure: a dotted path and why. */
+export interface FieldIssue {
+  path: string;
+  message: string;
+}
+
+/**
+ * The field list the API already sends with every `VALIDATION_FAILED` (`details.fields`). Without
+ * this a form can only say "something is wrong", which is what R-015 was really about.
+ */
+export function fieldIssues(error: unknown): FieldIssue[] {
+  if (!isApiError(error) || typeof error.details !== 'object' || error.details === null) return [];
+  const fields = (error.details as { fields?: unknown }).fields;
+  if (!Array.isArray(fields)) return [];
+
+  return fields.flatMap((entry) => {
+    if (typeof entry !== 'object' || entry === null) return [];
+    const { path, message } = entry as { path?: unknown; message?: unknown };
+    return typeof path === 'string' && typeof message === 'string' ? [{ path, message }] : [];
+  });
+}
+
 /** Statuses that can arrive without a JSON body, e.g. a 413 from the proxy on a large upload. */
 export function codeForStatus(status: number): string {
   if (status === 401) return 'SESSION_EXPIRED';
