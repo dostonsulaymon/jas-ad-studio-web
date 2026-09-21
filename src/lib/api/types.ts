@@ -28,6 +28,9 @@ export type OwnerExample = S['OwnerGalleryExampleDto'];
 export type ExampleInput = S['GalleryExampleInputDtoClass'];
 export type GalleryMedia = S['GalleryMediaDto'];
 export type ProStatus = S['ProStatusDto'];
+export type ProOrder = S['ProOrderDto'];
+export type OwnerProOrder = S['OwnerProOrderDto'];
+export type ProSubscription = S['ProSubscriptionDto'];
 export type PromptAccess = GalleryCard['promptAccess'];
 
 export type AcceptedGeneration = S['AcceptedGenerationDto'];
