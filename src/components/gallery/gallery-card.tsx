@@ -8,7 +8,16 @@ import { t } from '@/lib/i18n';
 import { categoryLabel, styleLabel } from './explorer';
 import { useSession } from '../session';
 
-const RATIO: Record<GalleryCard['aspectRatio'], string> = { '9:16': '9 / 16', '16:9': '16 / 9', '1:1': '1 / 1' };
+/**
+ * Every tile is the same shape, whatever the clip inside it is.
+ *
+ * The gallery mixes 9:16 and 16:9 examples, and a card that took its own video's ratio came out a
+ * third the height of its neighbours and read as broken. The tile is fixed at 9:16 — the product is
+ * vertical-ad-first, and that is the studio's own default — and a clip that does not match is fitted
+ * whole inside it with a blurred copy of its poster filling the rest. Nothing is cropped, because
+ * cropping a product ad can quietly cut the product out of frame.
+ */
+const TILE = '9 / 16';
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
@@ -114,8 +123,19 @@ export function GalleryCardView({
       <div
         ref={frame}
         className="relative overflow-hidden rounded-card bg-raised transition-transform duration-200 ease-[var(--ease-soft)] group-hover:-translate-y-0.5"
-        style={{ aspectRatio: RATIO[card.aspectRatio] }}
+        style={{ aspectRatio: TILE }}
       >
+        {card.aspectRatio === '9:16' ? null : (
+          // Same URL as the video's own poster, so this costs no extra request.
+          // eslint-disable-next-line @next/next/no-img-element -- gallery media through the API proxy
+          <img
+            src={card.posterUrl}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            className="absolute inset-0 size-full scale-110 object-cover blur-2xl brightness-[0.35]"
+          />
+        )}
         <video
           ref={video}
           src={armed ? card.videoUrl : undefined}
@@ -126,7 +146,7 @@ export function GalleryCardView({
           loop={autoplays}
           onEnded={autoplays ? undefined : onStop}
           onPause={autoplays ? undefined : () => playing && onStop()}
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-contain"
           aria-labelledby={titleId}
         />
         <button
@@ -141,7 +161,8 @@ export function GalleryCardView({
           <span className="sr-only">{shouldPlay ? t.gallery.pause(card.titleUz) : t.gallery.play(card.titleUz)}</span>
         </button>
         {card.promptAccess === 'pro' ? (
-          <span className="absolute top-3 right-3 inline-flex h-7 items-center rounded-full border border-white/20 bg-black/65 px-2.5 text-[11px] font-bold tracking-[0.1em] text-ink backdrop-blur-sm">
+          <span className="absolute top-3 right-3 inline-flex h-7 items-center gap-1.5 rounded-full bg-pro px-2.5 text-[11px] font-black tracking-[0.08em] text-pro-ink shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
+            <Lock size={12} weight="fill" aria-hidden />
             {t.gallery.proBadge}
           </span>
         ) : null}
@@ -162,7 +183,7 @@ export function GalleryCardView({
           aria-label={locked ? t.gallery.proFor(card.titleUz) : undefined}
           className={button({ variant: 'outline', size: 'sm', className: 'mt-3 max-sm:w-full' })}
         >
-          {locked ? <Lock size={16} aria-hidden /> : <TextAlignLeft size={16} aria-hidden />}
+          {locked ? <Lock size={16} weight="fill" aria-hidden className="text-pro" /> : <TextAlignLeft size={16} aria-hidden />}
           {locked ? t.gallery.proCardAction : t.gallery.promptAction}
         </button>
       </div>

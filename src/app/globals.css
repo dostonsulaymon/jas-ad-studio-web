@@ -15,6 +15,14 @@
   --color-muted: #a1a1a1;
   --color-danger: #f26d6d;
   --color-success: #4cc38a;
+  /**
+   * R-010 / R-016: the one hue that is not an error or a success state. The palette is
+   * monochrome by decision (D-092) and this is a deliberate exception, not a drift: PRO is
+   * the only thing on the page a visitor cannot have, so it is the only thing that earns a
+   * colour. Warm enough to read as paid, dark text on it for contrast at 11px.
+   */
+  --color-pro: #e3b341;
+  --color-pro-ink: #1a1405;
 
   --font-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
