@@ -10,16 +10,20 @@ import { useToast } from '../ui/toast';
 import { EmptyPanel, PanelHeading, SkeletonRows, StatusPill } from './parts';
 import { MediaUpload } from './media-upload';
 import { useLoad } from './use-load';
-import { api } from '@/lib/api/client';
+import { api, fieldIssues } from '@/lib/api/client';
 import type { ExampleInput, GalleryCategory, OwnerExample } from '@/lib/api/types';
-import { CATEGORY_ORDER } from '@/lib/gallery';
+import { CATEGORY_ORDER, slugify } from '@/lib/gallery';
 import { ASPECTS, FORMATS } from '@/lib/brief';
 import { t } from '@/lib/i18n';
 
 const SOURCE_TYPES: readonly ExampleInput['sourceType'][] = ['app-prompt', 'studio-made', 'external'];
 const media = (path: string) => `/api/gallery/media/${path}`;
 
-function blank(): ExampleInput {
+/**
+ * A new example starts empty and unpublished (R-015). Only what identifies and orders it has a
+ * value: the API accepts the rest blank until somebody ticks "saytda koʻrsatish".
+ */
+function blank(sortOrder: number): ExampleInput {
   return {
     slug: '',
     titleUz: '',
@@ -28,7 +32,7 @@ function blank(): ExampleInput {
     videoPath: '',
     posterPath: '',
     aspectRatio: '9:16',
-    durationSeconds: 10,
+    durationSeconds: 0,
     promptEn: '',
     conceptUz: '',
     creativePreset: { environment: '', lighting: '', cameraLanguage: '', pacing: '', mood: '' },
@@ -37,14 +41,44 @@ function blank(): ExampleInput {
     flowModel: null,
     flowMode: null,
     isPublished: false,
-    sortOrder: 0,
+    sortOrder,
   };
 }
+
+/** Uzbek names for the paths the API refuses, so the panel can point at the field, not at a code. */
+const FIELD_LABELS: Record<string, string> = {
+  titleUz: t.admin.gallery.titleUz,
+  slug: t.admin.gallery.slug,
+  category: t.admin.gallery.category,
+  style: t.admin.gallery.style,
+  videoPath: t.admin.gallery.video,
+  posterPath: t.admin.gallery.poster,
+  aspectRatio: t.admin.gallery.aspectRatio,
+  durationSeconds: t.admin.gallery.duration,
+  sortOrder: t.admin.gallery.sortOrder,
+  promptEn: t.admin.gallery.promptEn,
+  conceptUz: t.admin.gallery.conceptUz,
+  sourceNote: t.admin.gallery.sourceNote,
+  flowModel: t.admin.gallery.flowModel,
+  flowMode: t.admin.gallery.flowMode,
+  'creativePreset.environment': t.admin.gallery.environment,
+  'creativePreset.lighting': t.admin.gallery.lighting,
+  'creativePreset.cameraLanguage': t.admin.gallery.cameraLanguage,
+  'creativePreset.pacing': t.admin.gallery.pacing,
+  'creativePreset.mood': t.admin.gallery.mood,
+};
+
+const fieldLabel = (path: string) => FIELD_LABELS[path];
 
 function toInput(example: OwnerExample): ExampleInput {
   const { id: _id, ...input } = example;
   void _id;
   return input;
+}
+
+/** New examples go to the end of the list rather than fighting over 0. */
+function nextSortOrder(examples: OwnerExample[] | undefined): number {
+  return examples && examples.length > 0 ? Math.max(...examples.map((e) => e.sortOrder)) + 1 : 0;
 }
 
 export function AdminGallery() {
@@ -69,7 +103,7 @@ export function AdminGallery() {
     <section>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <PanelHeading title={t.admin.gallery.title} sub={t.admin.gallery.sub} />
-        <button type="button" onClick={() => setEditing({ id: null, input: blank() })} className={button({ variant: 'solid', size: 'sm', className: 'max-sm:w-full' })}>
+        <button type="button" onClick={() => setEditing({ id: null, input: blank(nextSortOrder(data?.examples)) })} className={button({ variant: 'solid', size: 'sm', className: 'max-sm:w-full' })}>
           <Plus size={16} aria-hidden />
           {t.admin.gallery.add}
         </button>
@@ -156,8 +190,13 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
   const [draft, setDraft] = useState<ExampleInput>(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
+  /** An owner who types their own slug keeps it; otherwise it follows the title. */
+  const [slugEdited, setSlugEdited] = useState(id !== null);
   const change = (patch: Partial<ExampleInput>) => setDraft((d) => ({ ...d, ...patch }));
   const preset = (patch: Partial<ExampleInput['creativePreset']>) => setDraft((d) => ({ ...d, creativePreset: { ...d.creativePreset, ...patch } }));
+
+  const refused = new Map(fieldIssues(error).map((issue) => [issue.path, issue.message]));
+  const problem = (path: string) => (refused.has(path) ? t.admin.gallery.fieldRequired : undefined);
 
   const submit = async () => {
     setBusy(true);
@@ -174,8 +213,23 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
   };
 
   const text = (key: 'titleUz' | 'slug' | 'sourceNote', label: string, help?: string) => (
-    <Field label={label} help={help}>
-      {({ id: fieldId, describedBy }) => <TextInput id={fieldId} aria-describedby={describedBy} value={draft[key]} onChange={(e) => change({ [key]: e.target.value })} />}
+    <Field label={label} help={help} error={problem(key)}>
+      {({ id: fieldId, describedBy, invalid }) => (
+        <TextInput
+          id={fieldId}
+          aria-describedby={describedBy}
+          invalid={invalid}
+          value={draft[key]}
+          onChange={(e) => {
+            if (key === 'slug') setSlugEdited(true);
+            change(
+              key === 'titleUz' && !slugEdited
+                ? { titleUz: e.target.value, slug: slugify(e.target.value) }
+                : { [key]: e.target.value },
+            );
+          }}
+        />
+      )}
     </Field>
   );
 
@@ -221,8 +275,10 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
                 </Select>
               )}
             </Field>
-            <Field label={t.admin.gallery.duration}>
-              {({ id: fieldId }) => <TextInput id={fieldId} type="number" min={1} value={draft.durationSeconds} onChange={(e) => change({ durationSeconds: Number(e.target.value) })} />}
+            <Field label={t.admin.gallery.duration} error={problem('durationSeconds')}>
+              {({ id: fieldId, invalid }) => (
+                <TextInput id={fieldId} type="number" min={0} invalid={invalid} value={draft.durationSeconds} onChange={(e) => change({ durationSeconds: Number(e.target.value) })} />
+              )}
             </Field>
             <Field label={t.admin.gallery.sortOrder}>
               {({ id: fieldId }) => <TextInput id={fieldId} type="number" value={draft.sortOrder} onChange={(e) => change({ sortOrder: Number(e.target.value) })} />}
@@ -240,8 +296,15 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
             </Field>
           </div>
 
+          <section aria-labelledby={`${titleId}-publish`} className="rounded-card border border-line p-5">
+            <h3 id={`${titleId}-publish`} className="font-semibold">
+              {t.admin.gallery.publishSection}
+            </h3>
+            <p className="mt-1 mb-5 text-[13.5px] leading-snug text-muted">{t.admin.gallery.publishSectionHelp}</p>
+
+            <div className="flex flex-col gap-6">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-input border border-line bg-bg p-4">
+            <div className={`rounded-input border bg-bg p-4 ${problem('posterPath') ? 'border-danger' : 'border-line'}`}>
               <p className="text-[14px] font-semibold">{t.admin.gallery.poster}</p>
               {draft.posterPath ? (
                 // eslint-disable-next-line @next/next/no-img-element -- owner media through the API proxy
@@ -253,20 +316,28 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
                 <MediaUpload accept="image/jpeg,image/webp" label={draft.posterPath ? t.admin.gallery.replace : t.admin.gallery.upload} onUploaded={(path) => change({ posterPath: path })} onError={setError} />
               </div>
             </div>
-            <div className="rounded-input border border-line bg-bg p-4">
+            <div className={`rounded-input border bg-bg p-4 ${problem('videoPath') ? 'border-danger' : 'border-line'}`}>
               <p className="text-[14px] font-semibold">{t.admin.gallery.video}</p>
               <p className="mt-2 font-mono text-[12.5px] break-all text-muted">{draft.videoPath || t.admin.gallery.noFile}</p>
               <div className="mt-3">
-                <MediaUpload accept="video/mp4,video/webm" label={draft.videoPath ? t.admin.gallery.replace : t.admin.gallery.upload} onUploaded={(path) => change({ videoPath: path })} onError={setError} />
+                <MediaUpload
+                  accept="video/mp4,video/webm"
+                  label={draft.videoPath ? t.admin.gallery.replace : t.admin.gallery.upload}
+                  onUploaded={(path) => change({ videoPath: path })}
+                  onMeta={(meta) => change({ durationSeconds: meta.durationSeconds, ...(meta.aspectRatio ? { aspectRatio: meta.aspectRatio } : {}) })}
+                  onError={setError}
+                />
               </div>
             </div>
           </div>
 
-          <Field label={t.admin.gallery.conceptUz}>
-            {({ id: fieldId }) => <TextArea id={fieldId} rows={3} value={draft.conceptUz} onChange={(e) => change({ conceptUz: e.target.value })} />}
+          <Field label={t.admin.gallery.conceptUz} error={problem('conceptUz')}>
+            {({ id: fieldId, invalid }) => <TextArea id={fieldId} rows={3} invalid={invalid} value={draft.conceptUz} onChange={(e) => change({ conceptUz: e.target.value })} />}
           </Field>
-          <Field label={t.admin.gallery.promptEn}>
-            {({ id: fieldId }) => <TextArea id={fieldId} rows={8} value={draft.promptEn} onChange={(e) => change({ promptEn: e.target.value })} className="font-mono !text-[14px]" />}
+          <Field label={t.admin.gallery.promptEn} error={problem('promptEn')}>
+            {({ id: fieldId, invalid }) => (
+              <TextArea id={fieldId} rows={8} invalid={invalid} value={draft.promptEn} onChange={(e) => change({ promptEn: e.target.value })} className="font-mono !text-[14px]" />
+            )}
           </Field>
 
           <fieldset className="rounded-card border border-line p-5">
@@ -282,8 +353,10 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
                   ['mood', t.admin.gallery.mood],
                 ] as const
               ).map(([key, label]) => (
-                <Field key={key} label={label}>
-                  {({ id: fieldId }) => <TextInput id={fieldId} value={draft.creativePreset[key]} onChange={(e) => preset({ [key]: e.target.value })} />}
+                <Field key={key} label={label} error={problem(`creativePreset.${key}`)}>
+                  {({ id: fieldId, invalid }) => (
+                    <TextInput id={fieldId} invalid={invalid} value={draft.creativePreset[key]} onChange={(e) => preset({ [key]: e.target.value })} />
+                  )}
                 </Field>
               ))}
             </div>
@@ -292,13 +365,19 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
           {text('sourceNote', t.admin.gallery.sourceNote, t.admin.gallery.sourceNoteHelp)}
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label={t.admin.gallery.flowModel} help={t.admin.gallery.flowHelp}>
-              {({ id: fieldId, describedBy }) => <TextInput id={fieldId} aria-describedby={describedBy} value={draft.flowModel ?? ''} onChange={(e) => change({ flowModel: e.target.value || null })} />}
+            <Field label={t.admin.gallery.flowModel} help={t.admin.gallery.flowHelp} error={problem('flowModel')}>
+              {({ id: fieldId, describedBy, invalid }) => (
+                <TextInput id={fieldId} aria-describedby={describedBy} invalid={invalid} value={draft.flowModel ?? ''} onChange={(e) => change({ flowModel: e.target.value || null })} />
+              )}
             </Field>
-            <Field label={t.admin.gallery.flowMode}>
-              {({ id: fieldId }) => <TextInput id={fieldId} value={draft.flowMode ?? ''} onChange={(e) => change({ flowMode: e.target.value || null })} />}
+            <Field label={t.admin.gallery.flowMode} error={problem('flowMode')}>
+              {({ id: fieldId, invalid }) => (
+                <TextInput id={fieldId} invalid={invalid} value={draft.flowMode ?? ''} onChange={(e) => change({ flowMode: e.target.value || null })} />
+              )}
             </Field>
           </div>
+            </div>
+          </section>
 
           <label className="flex min-h-11 items-start gap-3">
             <input type="checkbox" checked={draft.isPublished} onChange={(e) => change({ isPublished: e.target.checked })} className="mt-1 size-5 accent-[#fafafa]" />
@@ -308,7 +387,7 @@ function ExampleSheet({ id, initial, onClose, onSaved }: { id: string | null; in
             </span>
           </label>
 
-          {error ? <ErrorNotice error={error} /> : null}
+          {error ? <ErrorNotice error={error} fieldLabel={fieldLabel} /> : null}
         </div>
       </div>
       <div className="flex gap-2 border-t border-line px-5 py-4 sm:px-7">

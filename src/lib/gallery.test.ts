@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { categoriesPresent, filterCards, stylesPresent } from './gallery.ts';
+import { aspectFromSize, categoriesPresent, filterCards, slugify, stylesPresent } from './gallery.ts';
 import type { GalleryCard } from './api/types.ts';
 
 const card = (over: Partial<GalleryCard>): GalleryCard => ({
@@ -39,4 +39,19 @@ test('search matches category and format labels too', () => {
 test('chips and search combine', () => {
   assert.deepEqual(ids(filterCards(cards, { query: 'har', category: 'uy-rozgor', style: 'lifestyle-story' }, labels)), ['wipes']);
   assert.deepEqual(ids(filterCards(cards, { query: 'daftar', category: 'uy-rozgor', style: null }, labels)), []);
+});
+
+test('a slug is derived from an Uzbek title, modifier letters and all (R-015)', () => {
+  assert.equal(slugify('Vaqtni eslatuvchi qora telefon'), 'vaqtni-eslatuvchi-qora-telefon');
+  assert.equal(slugify('Tartibli kun uchun sokin koʻk daftar'), 'tartibli-kun-uchun-sokin-kok-daftar');
+  assert.equal(slugify('Har kuni qoʻl yetadigan tozalik!'), 'har-kuni-qol-yetadigan-tozalik');
+  assert.equal(slugify('  ---  '), '');
+});
+
+test('the aspect ratio of an uploaded clip is the nearest one the product supports', () => {
+  assert.equal(aspectFromSize(1080, 1920), '9:16');
+  assert.equal(aspectFromSize(1920, 1080), '16:9');
+  assert.equal(aspectFromSize(1080, 1080), '1:1');
+  assert.equal(aspectFromSize(1024, 1080), '1:1');
+  assert.equal(aspectFromSize(0, 1080), null);
 });
