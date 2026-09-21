@@ -18,7 +18,7 @@ export function Logo() {
   return (
     <>
       <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-[8px] bg-ink text-[15px] leading-none font-black text-bg">
-        J
+        P
       </span>
       <span className="text-[16px] font-bold tracking-[-0.02em] max-sm:sr-only">{t.brand.name}</span>
     </>
