@@ -78,6 +78,13 @@ export const uz = {
     lockedSignedOut: 'Koʻrish uchun avval tizimga kiring.',
     lockedSignedIn: 'PRO kirish hozircha sayt egasi tomonidan beriladi. Pastdagi aloqa orqali yozing.',
     lockedSignIn: 'Kirish',
+    proPrice: (price: string) => `${price} / 30 kun`,
+    proBuy: 'PRO olish',
+    proOrdering: 'Yuborilmoqda',
+    proPending: 'Buyurtmangiz koʻrib chiqilmoqda',
+    proPendingBody: 'Toʻlovni quyidagi kartaga oʻtkazing. Sayt egasi tasdiqlagach, barcha PRO promptlar ochiladi.',
+    proPayTo: 'Toʻlov uchun karta',
+    proNoPrice: 'PRO kirish hozircha sayt egasi tomonidan beriladi. Pastdagi aloqa orqali yozing.',
 
     categories: {
       kiyim: 'Kiyim',
@@ -426,6 +433,9 @@ export const uz = {
     media_empty: { message: 'Fayl tanlanmadi.', action: 'Fayl tanlab, qaytadan urinib koʻring', detail: '' },
     gallery_example_not_found: { message: 'Tanlangan namuna endi mavjud emas.', action: 'Uslubni olib tashlab, qaytadan urinish', detail: 'Brifingizdagi boshqa maʼlumotlar saqlanib qoldi.' },
     prompt_locked: { message: 'Bu prompt PRO uchun.', action: 'Yopish', detail: 'PRO kirish sayt egasi tomonidan beriladi.' },
+    pro_not_for_sale: { message: 'PRO hozircha sotuvda emas.', action: 'Biz bilan bogʻlaning', detail: 'Narx hali belgilanmagan.' },
+    pro_order_not_pending: { message: 'Bu buyurtma allaqachon koʻrib chiqilgan.', action: 'Yangilash', detail: '' },
+    pro_order_not_found: { message: 'Buyurtma topilmadi.', action: 'Yangilash', detail: '' },
     asset_not_found: { message: 'Rasm topilmadi.', action: 'Qaytadan yuklash', detail: '' },
     too_many_photos: { message: '4 tadan ortiq rasm yuklab boʻlmaydi.', action: 'Bittasini olib tashlang', detail: '' },
     upload_type: { message: 'Bu rasm emas.', action: 'Boshqa fayl tanlash', detail: 'JPG, PNG yoki WebP yuboring.' },
@@ -488,7 +498,20 @@ export const uz = {
     deniedSignedOut: 'Panelni ochish uchun egasi hisobi bilan kiring.',
     deniedAction: 'Bosh sahifaga qaytish',
 
-    orders: {
+    proOrders: {
+    title: 'PRO buyurtmalar',
+    sub: 'Toʻlov tasdiqlansa, sotuvchiga PRO kirish ochiladi.',
+    empty: 'Kutayotgan PRO buyurtma yoʻq.',
+    confirm: 'Tasdiqlash',
+    confirming: 'Tasdiqlanmoqda',
+    reject: 'Rad etish',
+    cancel: 'Bekor qilish',
+    confirmWarn: (days: number, email: string) => `${email} hisobiga ${days} kunlik PRO ochiladi. Bu amal qaytarilmaydi.`,
+    rejectReason: 'Rad etish sababi',
+    days: (n: number) => `${n} kun`,
+  },
+
+  orders: {
       title: 'Buyurtmalar',
       empty: 'Bu holatda buyurtma yoʻq.',
       emptyHint: 'Yangi buyurtmalar shu yerda paydo boʻladi.',
@@ -533,6 +556,10 @@ export const uz = {
       telegramUser: 'Telegram foydalanuvchi',
       telegramBot: 'Telegram bot',
       email: 'Email',
+      proTitle: 'PRO obuna',
+      proSub: 'Narx belgilanmaguncha PRO sotuvda koʻrinmaydi.',
+      proPrice: 'Narxi (soʻm)',
+      proDays: 'Muddati (kun)',
       packs: 'Paketlar va narxlar',
       packsSub: 'Narx qoʻyilmaguncha sotuvchilarga hech qanday narx koʻrsatilmaydi.',
       packsEmpty: 'Hozircha narxi qoʻyilgan paket yoʻq. Paketlar roʻyxati API tomonida sozlanadi.',

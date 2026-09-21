@@ -8,7 +8,7 @@ import { useToast } from '../ui/toast';
 import { PanelHeading, SkeletonRows } from './parts';
 import { useLoad } from './use-load';
 import { api } from '@/lib/api/client';
-import type { Pack, PaymentInstructions, PublicSettings, SupportContacts } from '@/lib/api/types';
+import type { Pack, PaymentInstructions, ProSubscription, PublicSettings, SupportContacts } from '@/lib/api/types';
 import { t } from '@/lib/i18n';
 
 const orNull = (value: string) => (value.trim() ? value.trim() : null);
@@ -22,6 +22,7 @@ export function AdminSettings() {
 
   return (
     <div className="max-w-[640px]">
+      <ProForm initial={settings.data.proSubscription} />
       <PaymentForm initial={settings.data.paymentInstructions} />
       <SupportForm initial={settings.data.supportContacts} />
       <section className="mt-12 border-t border-line pt-10">
@@ -35,6 +36,45 @@ export function AdminSettings() {
         </ul>
       </section>
     </div>
+  );
+}
+
+/** D-102: one plan, one price. A blank price means PRO is not for sale and the panel says so. */
+function ProForm({ initial }: { initial: ProSubscription }) {
+  const save = useSave();
+  const [priceUzs, setPrice] = useState(initial.priceUzs === null ? '' : String(initial.priceUzs));
+  const [days, setDays] = useState(String(initial.days));
+
+  return (
+    <section>
+      <PanelHeading title={t.admin.settings.proTitle} sub={t.admin.settings.proSub} />
+      {save.error ? <ErrorNotice error={save.error} className="mb-4" /> : null}
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label={t.admin.settings.proPrice}>
+          {({ id }) => <TextInput id={id} inputMode="numeric" value={priceUzs} onChange={(e) => setPrice(e.target.value)} />}
+        </Field>
+        <Field label={t.admin.settings.proDays}>
+          {({ id }) => <TextInput id={id} type="number" min={1} value={days} onChange={(e) => setDays(e.target.value)} />}
+        </Field>
+      </div>
+      <button
+        type="button"
+        disabled={save.busy}
+        onClick={() =>
+          void save.run(() =>
+            api.patch('/api/owner/settings/pro-subscription', {
+              json: {
+                priceUzs: priceUzs.trim() === '' ? null : Math.trunc(Number(priceUzs)),
+                days: Math.trunc(Number(days)),
+              },
+            }),
+          )
+        }
+        className={button({ variant: 'solid', size: 'md', className: 'mt-5' })}
+      >
+        {save.busy ? t.admin.settings.saving : t.admin.settings.save}
+      </button>
+    </section>
   );
 }
 

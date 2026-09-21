@@ -7,8 +7,10 @@ import { Sheet, SheetHeader } from '../ui/sheet';
 import { button } from '../ui/button';
 import { ErrorNotice } from '../ui/error-notice';
 import { readGalleryExample, rememberInspiration } from '@/lib/gallery';
+import { api } from '@/lib/api/client';
+import { formatUzs } from '@/lib/i18n';
 import { copyText } from '@/lib/generation';
-import type { GalleryCard, GalleryExample } from '@/lib/api/types';
+import type { GalleryCard, GalleryExample, ProOrder, PublicSettings } from '@/lib/api/types';
 import { t } from '@/lib/i18n';
 import { categoryLabel, styleLabel } from './explorer';
 import { useSession } from '../session';
@@ -33,6 +35,44 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
   const [copy, setCopy] = useState<'idle' | 'ok' | 'failed'>('idle');
   const [attempt, setAttempt] = useState(0);
   const pre = useRef<HTMLPreElement>(null);
+
+  const [settings, setSettings] = useState<PublicSettings | null>(null);
+  const [order, setOrder] = useState<ProOrder | null>(null);
+  const [ordering, setOrdering] = useState(false);
+
+  /**
+   * D-102: what PRO costs, and where to send the money. Asked only when the panel is actually
+   * locked, and the price may be null — which means PRO is not for sale and the panel says so
+   * rather than inventing a number (D-072's rule, one product over).
+   */
+  useEffect(() => {
+    if (!locked || session.status !== 'signedIn') return;
+    const controller = new AbortController();
+    api
+      .get<PublicSettings>('/api/settings/public', { signal: controller.signal })
+      .then(setSettings)
+      .catch(() => {
+        /* the panel falls back to "ask the owner" */
+      });
+    api
+      .get<ProOrder[]>('/api/pro/orders', { signal: controller.signal })
+      .then((orders) => setOrder(orders.find((o) => o.status === 'pending') ?? null))
+      .catch(() => {
+        /* no order is the safe assumption */
+      });
+    return () => controller.abort();
+  }, [locked, session.status]);
+
+  const buy = useCallback(async () => {
+    setOrdering(true);
+    try {
+      setOrder(await api.post<ProOrder>('/api/pro/orders'));
+    } catch (cause) {
+      setError(cause);
+    } finally {
+      setOrdering(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (locked) return;
@@ -76,12 +116,37 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
             <Lock size={24} aria-hidden className="mx-auto text-muted" />
             <p className="mt-3 text-[17px] font-bold tracking-[-0.01em]">{t.gallery.lockedTitle}</p>
             <p className="mx-auto mt-2 max-w-[38ch] text-[14px] leading-snug text-muted">
-              {session.status === 'signedIn' ? t.gallery.lockedSignedIn : t.gallery.lockedSignedOut}
+              {session.status === 'signedIn' ? '' : t.gallery.lockedSignedOut}
             </p>
-            {session.status === 'signedIn' ? null : (
+            {session.status !== 'signedIn' ? (
               <a href="/api/auth/google" className={button({ variant: 'solid', size: 'md', className: 'mt-5' })}>
                 {t.gallery.lockedSignIn}
               </a>
+            ) : order ? (
+              <div className="mx-auto mt-5 max-w-[42ch] rounded-input border border-line bg-raised px-4 py-4 text-left">
+                <p className="font-semibold">{t.gallery.proPending}</p>
+                <p className="mt-1 text-[13.5px] leading-snug text-muted">{t.gallery.proPendingBody}</p>
+                {settings?.paymentInstructions.cardNumber ? (
+                  <>
+                    <p className="mt-3 text-[12.5px] text-muted">{t.gallery.proPayTo}</p>
+                    <p className="font-mono text-[15px] tracking-wide select-all">{settings.paymentInstructions.cardNumber}</p>
+                    {settings.paymentInstructions.cardHolder ? (
+                      <p className="text-[13px] text-muted">{settings.paymentInstructions.cardHolder}</p>
+                    ) : null}
+                  </>
+                ) : null}
+              </div>
+            ) : settings && settings.proSubscription.priceUzs !== null ? (
+              <button
+                type="button"
+                disabled={ordering}
+                onClick={() => void buy()}
+                className={button({ variant: 'primary', size: 'md', className: 'mt-5' })}
+              >
+                {ordering ? t.gallery.proOrdering : `${t.gallery.proBuy} · ${formatUzs(settings.proSubscription.priceUzs)}`}
+              </button>
+            ) : (
+              <p className="mx-auto mt-4 max-w-[38ch] text-[13.5px] text-muted">{t.gallery.proNoPrice}</p>
             )}
           </div>
         ) : error ? (

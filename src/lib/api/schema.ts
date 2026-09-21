@@ -1,5 +1,5 @@
 /**
- * GENERATED from jas-ad-studio-api/openapi.json (37 paths). Do not edit.
+ * GENERATED from jas-ad-studio-api/openapi.json (42 paths). Do not edit.
  * Regenerate with `pnpm api:generate`.
  */
 
@@ -413,6 +413,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/owner/pro/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** PRO orders, newest first. Filter with ?status=pending. */
+        get: operations["OwnerController_listProOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/pro/orders/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm a PRO payment. Extends the seller's access. */
+        post: operations["OwnerController_confirmProOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/owner/pro/orders/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a PRO order. The reason is required. */
+        post: operations["OwnerController_rejectProOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/owner/settings/hero-photos": {
         parameters: {
             query?: never;
@@ -445,6 +496,23 @@ export interface paths {
         head?: never;
         /** Set the card number, Payme/Click links and Uzbek instructions. */
         patch: operations["OwnerController_setPaymentInstructions"];
+        trace?: never;
+    };
+    "/api/owner/settings/pro-subscription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set the PRO price in soʻm and its length in days. */
+        patch: operations["OwnerController_setProSubscription"];
         trace?: never;
     };
     "/api/owner/settings/support-contacts": {
@@ -526,6 +594,24 @@ export interface paths {
         get: operations["ProController_status"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pro/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** This seller's own PRO orders, newest first. */
+        get: operations["ProController_listMyOrders"];
+        put?: never;
+        /** Ask to buy PRO. The owner confirms the payment by hand. */
+        post: operations["ProController_placeOrder"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1026,6 +1112,23 @@ export interface components {
             /** Format: uuid */
             userId: string;
         };
+        OwnerProOrderDto: {
+            amountUzs: number;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            days: number;
+            /** Format: email */
+            email: string;
+            /** Format: uuid */
+            id: string;
+            rejectionReason: string | null;
+            /** @enum {string} */
+            status: "pending" | "confirmed" | "rejected";
+            /** Format: uuid */
+            userId: string;
+        };
         OwnerSpendDayDto: {
             day: string;
             estCostUsd: number;
@@ -1119,10 +1222,29 @@ export interface components {
             id: string;
             name: string;
         };
+        ProOrderDto: {
+            amountUzs: number;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            days: number;
+            /** Format: uuid */
+            id: string;
+            rejectionReason: string | null;
+            /** @enum {string} */
+            status: "pending" | "confirmed" | "rejected";
+        };
         ProStatusDto: {
             hasPro: boolean;
             /** Format: date-time */
             until: string | null;
+        };
+        ProSubscriptionDto: {
+            /** @default 30 */
+            days: number;
+            /** @default null */
+            priceUzs: number | null;
         };
         PublicSettingsDto: {
             heroPhotos: {
@@ -1151,6 +1273,12 @@ export interface components {
                  */
                 paymeUrl: string | null;
             };
+            proSubscription: {
+                /** @default 30 */
+                days: number;
+                /** @default null */
+                priceUzs: number | null;
+            };
             supportContacts: {
                 /**
                  * Format: email
@@ -1164,6 +1292,9 @@ export interface components {
             };
         };
         RejectOrderDto: {
+            reason: string;
+        };
+        RejectProOrderDto: {
             reason: string;
         };
         StoredAssetDto: {
@@ -1755,6 +1886,71 @@ export interface operations {
             };
         };
     };
+    OwnerController_listProOrders: {
+        parameters: {
+            query: {
+                status: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerProOrderDto"][];
+                };
+            };
+        };
+    };
+    OwnerController_confirmProOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProStatusDto"];
+                };
+            };
+        };
+    };
+    OwnerController_rejectProOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectProOrderDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OwnerController_setHeroPhotos: {
         parameters: {
             query?: never;
@@ -1797,6 +1993,29 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PaymentInstructionsDto"];
+                };
+            };
+        };
+    };
+    OwnerController_setProSubscription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProSubscriptionDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProSubscriptionDto"];
                 };
             };
         };
@@ -1896,6 +2115,44 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProStatusDto"];
+                };
+            };
+        };
+    };
+    ProController_listMyOrders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProOrderDto"][];
+                };
+            };
+        };
+    };
+    ProController_placeOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProOrderDto"];
                 };
             };
         };
