@@ -168,7 +168,7 @@ export function GalleryCardView({
             alt=""
             aria-hidden
             loading="lazy"
-            className="absolute top-3 left-3 size-14 rounded-[10px] border border-white/25 object-cover shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:size-16"
+            className="absolute top-3 left-3 size-16 rounded-[12px] border border-white/25 object-cover shadow-[0_2px_14px_rgba(0,0,0,0.5)] sm:size-24"
           />
         ) : null}
         {card.promptAccess === 'pro' ? (
