@@ -160,6 +160,17 @@ export function GalleryCardView({
           {shouldPlay ? <Pause size={18} weight="fill" aria-hidden /> : <Play size={18} weight="fill" aria-hidden />}
           <span className="sr-only">{shouldPlay ? t.gallery.pause(card.titleUz) : t.gallery.play(card.titleUz)}</span>
         </button>
+        {card.referencePhotoUrl ? (
+          // R-017: the raw product photo the video was made from, small, over the top left.
+          // eslint-disable-next-line @next/next/no-img-element -- gallery media through the API proxy
+          <img
+            src={card.referencePhotoUrl}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            className="absolute top-3 left-3 size-14 rounded-[10px] border border-white/25 object-cover shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:size-16"
+          />
+        ) : null}
         {card.promptAccess === 'pro' ? (
           <span className="absolute top-3 right-3 inline-flex h-7 items-center gap-1.5 rounded-full bg-pro px-2.5 text-[11px] font-black tracking-[0.08em] text-pro-ink shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
             <Lock size={12} weight="fill" aria-hidden />
