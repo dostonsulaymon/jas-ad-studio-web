@@ -38,7 +38,7 @@ test('the guard catches every lookalike and passes canonical text', () => {
     assert.equal(OFFENDING.test(bad), true, bad);
   }
   assert.equal(OFFENDING.test('yoʻnalish'), false);
-  assert.equal(OFFENDING.test("title: 'JAS Ad Studio',"), false);
+  assert.equal(OFFENDING.test("title: 'Promptly',"), false);
   assert.equal(isComment(" * the api repo's main"), true);
 });
 

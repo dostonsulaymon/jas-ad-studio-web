@@ -8,8 +8,8 @@
 
 export const uz = {
   brand: {
-    name: 'JAS Ad Studio',
-    short: 'JAS',
+    name: 'PROMPTLY',
+    short: 'PROMPTLY',
   },
 
   nav: {
@@ -112,12 +112,12 @@ export const uz = {
     title: 'Savollar',
     items: [
       {
-        q: 'JAS Ad Studio videoni oʻzi tayyorlaydimi?',
+        q: 'Promptly videoni oʻzi tayyorlaydimi?',
         a: 'Yoʻq. Biz reklama gʻoyasi, oʻzbekcha kadrlar rejasi va tayyor promptni beramiz. Videoni siz Google Flowʼda tayyorlaysiz.',
       },
       {
         q: 'Google Flow bepulmi?',
-        a: 'Bu sizning Google hisobingiz, mamlakatingiz va Googleʼning joriy shartlariga bogʻliq. JAS Ad Studio Google limitlariga tegmaydi.',
+        a: 'Bu sizning Google hisobingiz, mamlakatingiz va Googleʼning joriy shartlariga bogʻliq. Promptly Google limitlariga tegmaydi.',
       },
       {
         q: 'Mahsulotim oʻzgarib ketmaydimi?',
@@ -137,7 +137,7 @@ export const uz = {
 
   footer: {
     madeFor: 'Oʻzbekistondagi onlayn sotuvchilar uchun',
-    notVideo: 'JAS Ad Studio reklama promptini tayyorlaydi. Videoni Google Flow tayyorlaydi.',
+    notVideo: 'Promptly reklama promptini tayyorlaydi. Videoni Google Flow tayyorlaydi.',
     privacy: 'Maxfiylik siyosati',
     supportTitle: 'Yordam',
     telegram: 'Telegram',
@@ -146,11 +146,11 @@ export const uz = {
   },
 
   privacy: {
-    metaTitle: 'Maxfiylik siyosati | JAS Ad Studio',
+    metaTitle: 'Maxfiylik siyosati | Promptly',
     title: 'Maxfiylik siyosati',
     updated: 'Oxirgi yangilanish: 2026-yil 13-sentabr',
     interim:
-      'Bu vaqtinchalik matn. U JAS Ad Studio hozir aynan nima qilishini tavsiflaydi. Toʻliq, yuridik jihatdan tekshirilgan matn tayyor boʻlgach, shu sahifada almashtiriladi.',
+      'Bu vaqtinchalik matn. U Promptly hozir aynan nima qilishini tavsiflaydi. Toʻliq, yuridik jihatdan tekshirilgan matn tayyor boʻlgach, shu sahifada almashtiriladi.',
     sections: [
       {
         title: 'Qanday maʼlumot yigʻamiz',
@@ -194,7 +194,7 @@ export const uz = {
   },
 
   studioPage: {
-    metaTitle: 'Studiya | JAS Ad Studio',
+    metaTitle: 'Studiya | Promptly',
     title: 'Reklama promptini tayyorlash',
     sub: 'Mahsulot rasmi va qisqa tavsif bering. Uch qadamdan soʻng Google Flow uchun tayyor prompt olasiz.',
   },
@@ -573,7 +573,7 @@ export const uz = {
       conceptUz: 'Qisqa tavsif',
       promptEn: 'Prompt (inglizcha)',
       sourceType: 'Manba turi',
-      sourceTypes: { 'app-prompt': 'JAS Ad Studio prompti', 'studio-made': 'Studiyada tayyorlangan', external: 'Tashqi manba' },
+      sourceTypes: { 'app-prompt': 'Promptly prompti', 'studio-made': 'Studiyada tayyorlangan', external: 'Tashqi manba' },
       sourceNote: 'Manba izohi',
       sourceNoteHelp: 'Saytda har bir namuna ostida koʻrinadi.',
       flowModel: 'Flow modeli',

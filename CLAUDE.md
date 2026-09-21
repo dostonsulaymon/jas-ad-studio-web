@@ -1,6 +1,6 @@
 # CLAUDE.md — jas-ad-studio-web-v2
 
-The rebuilt frontend of **JAS Ad Studio**, designed from motionsites.ai (the feel) and Jakhongir's build (the structure). It replaces `../jas-ad-studio-web` (v1, live at jas.kitobnarxi.uz) **only when Doston approves**. Planning docs live in the api repo: brief `../jas-ad-studio-api/docs/prompts/2026-09-13-frontend-rebuild.md`, design spec `../jas-ad-studio-api/docs/superpowers/specs/2026-09-13-web-v2-design.md`.
+The rebuilt frontend of **Promptly**, designed from motionsites.ai (the feel) and Jakhongir's build (the structure). It replaces `../jas-ad-studio-web` (v1, live at jas.kitobnarxi.uz) **only when Doston approves**. Planning docs live in the api repo: brief `../jas-ad-studio-api/docs/prompts/2026-09-13-frontend-rebuild.md`, design spec `../jas-ad-studio-api/docs/superpowers/specs/2026-09-13-web-v2-design.md`.
 
 **Never edit, build or restart v1 or the api from here.** v2 is a client of the unchanged API.
 

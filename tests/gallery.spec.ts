@@ -71,6 +71,7 @@ test('category chips list only categories that exist, and filter', async ({ page
 test('Copy puts only the example prompt on the clipboard, signed out and free', async ({ page, context, request }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const slugResponse = page.waitForResponse((r) => /\/api\/gallery\/[^/]+$/.test(new URL(r.url()).pathname) && r.request().method() === 'GET');
+  // A free example on purpose: this test is D-007's half, that a prompt needs no sign-in.
   await page.locator('#galereya').getByRole('button', { name: 'Prompt', exact: true }).first().click();
   const example = await (await slugResponse).json();
 
@@ -94,8 +95,11 @@ test('the sheet closes on Escape and returns focus to its trigger', async ({ pag
 });
 
 test('"Shu uslubdan foydalanish" carries only the example id into the studio', async ({ page }) => {
-  const title = await page.locator('#galereya ul > li h3').first().innerText();
-  await page.locator('#galereya').getByRole('button', { name: 'Prompt', exact: true }).first().click();
+  // Scoped to one card rather than taking the first title and the first button independently:
+  // since R-010 a PRO example's button reads "PRO prompt", so the two were not the same card.
+  const card = page.locator('#galereya ul > li').filter({ has: page.getByRole('button', { name: 'Prompt', exact: true }) }).first();
+  const title = await card.locator('h3').innerText();
+  await card.getByRole('button', { name: 'Prompt', exact: true }).click();
   await page.getByRole('button', { name: 'Shu uslubdan foydalanish' }).click();
   await expect(page).toHaveURL(/\/studiya$/);
   const stored = await page.evaluate(() => JSON.parse(sessionStorage.getItem('jas.v2.draft') ?? '{}'));

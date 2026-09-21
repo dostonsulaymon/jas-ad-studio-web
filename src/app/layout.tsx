@@ -13,7 +13,7 @@ import { t } from '@/lib/i18n';
 const onest = Onest({ subsets: ['latin', 'latin-ext'], variable: '--font-onest', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'JAS Ad Studio',
+  title: 'Promptly',
   description: t.hero.sub,
 };
 
