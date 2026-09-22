@@ -23,7 +23,7 @@ export function SiteFooter({ settings }: { settings: PublicSettings | null }) {
         <div className="max-w-[44ch]">
           <p className="flex items-center gap-2.5">
             <span aria-hidden className="grid size-7 place-items-center rounded-[8px] bg-ink text-[15px] font-black text-bg">
-              J
+              P
             </span>
             <span className="text-[16px] font-bold tracking-[-0.02em]">{t.brand.name}</span>
           </p>
