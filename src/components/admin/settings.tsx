@@ -44,6 +44,7 @@ function ProForm({ initial }: { initial: ProSubscription }) {
   const save = useSave();
   const [priceUzs, setPrice] = useState(initial.priceUzs === null ? '' : String(initial.priceUzs));
   const [days, setDays] = useState(String(initial.days));
+  const [generations, setGenerations] = useState(String(initial.generationsIncluded));
 
   return (
     <section>
@@ -56,6 +57,11 @@ function ProForm({ initial }: { initial: ProSubscription }) {
         <Field label={t.admin.settings.proDays}>
           {({ id }) => <TextInput id={id} type="number" min={1} value={days} onChange={(e) => setDays(e.target.value)} />}
         </Field>
+        <Field label={t.admin.settings.proGenerations} help={t.admin.settings.proGenerationsHelp} className="sm:col-span-2">
+          {({ id, describedBy }) => (
+            <TextInput id={id} type="number" min={0} aria-describedby={describedBy} value={generations} onChange={(e) => setGenerations(e.target.value)} />
+          )}
+        </Field>
       </div>
       <button
         type="button"
@@ -66,6 +72,7 @@ function ProForm({ initial }: { initial: ProSubscription }) {
               json: {
                 priceUzs: priceUzs.trim() === '' ? null : Math.trunc(Number(priceUzs)),
                 days: Math.trunc(Number(days)),
+                generationsIncluded: Math.trunc(Number(generations)),
               },
             }),
           )

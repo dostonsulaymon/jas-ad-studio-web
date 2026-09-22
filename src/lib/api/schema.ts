@@ -1121,6 +1121,7 @@ export interface components {
             days: number;
             /** Format: email */
             email: string;
+            generations: number;
             /** Format: uuid */
             id: string;
             rejectionReason: string | null;
@@ -1229,6 +1230,7 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
             days: number;
+            generations: number;
             /** Format: uuid */
             id: string;
             rejectionReason: string | null;
@@ -1243,6 +1245,8 @@ export interface components {
         ProSubscriptionDto: {
             /** @default 30 */
             days: number;
+            /** @default 0 */
+            generationsIncluded: number;
             /** @default null */
             priceUzs: number | null;
         };
@@ -1276,6 +1280,8 @@ export interface components {
             proSubscription: {
                 /** @default 30 */
                 days: number;
+                /** @default 0 */
+                generationsIncluded: number;
                 /** @default null */
                 priceUzs: number | null;
             };
