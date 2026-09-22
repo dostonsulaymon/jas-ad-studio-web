@@ -317,6 +317,13 @@ export function Studio() {
   };
 
   const running = jobStatus !== null && !isTerminal(jobStatus);
+  /**
+   * R-019: once a seller has a prompt, the thing they actually want from step 2 is a different
+   * `reklama formati` and a new prompt — not a walk back through step 3. So the button there
+   * becomes **Tayyorlash** and generates straight away. It still says what it costs, because
+   * skipping the review step skips the one screen that used to say so.
+   */
+  const canRegenerate = step === 2 && versions.length > 0;
   const hasResult = step === 3 && generation?.status === 'ready' && Boolean(generation.package);
   const uploading = uploads.some((u) => u.status === 'uploading');
   const errors = showErrors
@@ -398,7 +405,27 @@ export function Studio() {
                 <span className="max-sm:sr-only">{t.studio.back}</span>
               </button>
             ) : null}
-            {step < 3 ? (
+            {canRegenerate ? (
+              <>
+                <p className="ml-auto hidden max-w-[34ch] text-right text-[12.5px] leading-snug text-muted sm:block">
+                  {t.studio.regenerateNote}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Step 3 is where progress and the result render, so move there first and let
+                    // the seller watch it work rather than leaving them on a step that says nothing.
+                    go(3);
+                    void generate();
+                  }}
+                  disabled={running || !signedIn || photos.length === 0 || uploading}
+                  className={button({ variant: 'primary', size: 'md', className: 'max-sm:flex-1 sm:h-14 sm:px-7' })}
+                >
+                  <Lightning size={18} weight="fill" aria-hidden />
+                  {running ? t.review.generating : t.studio.regenerate}
+                </button>
+              </>
+            ) : step < 3 ? (
               <button type="button" onClick={advance} disabled={uploading} className={button({ variant: 'solid', size: 'md', className: 'max-sm:flex-1 sm:ml-auto' })}>
                 {t.studio.continue}
                 <ArrowRight size={18} aria-hidden />
