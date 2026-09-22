@@ -84,6 +84,7 @@ export const uz = {
     proPending: 'Buyurtmangiz koʻrib chiqilmoqda',
     proPendingBody: 'Toʻlovni quyidagi kartaga oʻtkazing. Sayt egasi tasdiqlagach, barcha PRO promptlar ochiladi.',
     proPayTo: 'Toʻlov uchun karta',
+    receipt: (handle: string) => `Tasdiqlash uchun toʻlov chekini telegram orqali yuboring → ${handle}`,
     proNoPrice: 'PRO kirish hozircha sayt egasi tomonidan beriladi. Pastdagi aloqa orqali yozing.',
 
     categories: {
@@ -214,6 +215,9 @@ export const uz = {
     yourProduct: 'Sizning mahsulotingiz',
     noPhotoYet: 'Rasm hali yuklanmagan',
     continue: 'Davom etish',
+    /** R-019: on step 2, once a prompt already exists, changing the format regenerates from here. */
+    regenerate: 'Tayyorlash',
+    regenerateNote: 'Formatni oʻzgartirdingiz. Yangi prompt 1 ta limitni ishlatadi.',
     back: 'Orqaga',
     primaryBadge: 'Asosiy',
     newProject: 'Yangi loyiha',

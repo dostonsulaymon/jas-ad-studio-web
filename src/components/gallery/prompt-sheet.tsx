@@ -133,6 +133,11 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
                     {settings.paymentInstructions.cardHolder ? (
                       <p className="text-[13px] text-muted">{settings.paymentInstructions.cardHolder}</p>
                     ) : null}
+                    {settings.supportContacts.telegramUser ? (
+                      <p className="mt-2 text-[13.5px] leading-snug">
+                        {t.gallery.receipt(settings.supportContacts.telegramUser)}
+                      </p>
+                    ) : null}
                   </>
                 ) : null}
               </div>

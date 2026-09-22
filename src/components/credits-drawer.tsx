@@ -182,6 +182,13 @@ export function CreditsDrawer({ open, onClose }: { open: boolean; onClose: () =>
                     </div>
                   ) : null}
                   {payment?.instructionsUz ? <p className="pt-1 text-[14px] leading-relaxed text-muted">{payment.instructionsUz}</p> : null}
+                  {/* R-020: a transfer means nothing until somebody sees the receipt, so the
+                      screen that shows the card also says where to send it. */}
+                  {settings?.supportContacts.telegramUser ? (
+                    <p className="pt-2 text-[14px] leading-relaxed">
+                      {t.gallery.receipt(settings.supportContacts.telegramUser)}
+                    </p>
+                  ) : null}
                   {payment?.paymeUrl ? (
                     <a href={payment.paymeUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center underline underline-offset-4">
                       Payme
