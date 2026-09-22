@@ -150,6 +150,13 @@ export function PromptSheet({ card, onClose }: { card: GalleryCard; onClose: () 
               >
                 {ordering ? t.gallery.proOrdering : `${t.gallery.proBuy} · ${formatUzs(settings.proSubscription.priceUzs)}`}
               </button>
+            ) : null}
+            {!order && settings && settings.proSubscription.priceUzs !== null ? (
+              <p className="mx-auto mt-3 max-w-[38ch] text-[13px] leading-snug text-muted">
+                {settings.proSubscription.generationsIncluded > 0
+                  ? t.gallery.proIncludes(settings.proSubscription.generationsIncluded)
+                  : t.gallery.proIncludesPromptsOnly}
+              </p>
             ) : (
               <p className="mx-auto mt-4 max-w-[38ch] text-[13.5px] text-muted">{t.gallery.proNoPrice}</p>
             )}
