@@ -1,6 +1,6 @@
-# CLAUDE.md — jas-ad-studio-web-v2
+# CLAUDE.md — jas-ad-studio-web
 
-The rebuilt frontend of **Promptly**, designed from motionsites.ai (the feel) and Jakhongir's build (the structure). It replaces `../jas-ad-studio-web` (v1, live at jas.kitobnarxi.uz) **only when Doston approves**. Planning docs live in the api repo: brief `../jas-ad-studio-api/docs/prompts/2026-09-13-frontend-rebuild.md`, design spec `../jas-ad-studio-api/docs/superpowers/specs/2026-09-13-web-v2-design.md`.
+The rebuilt frontend of **Promptly**, designed from motionsites.ai (the feel) and Jakhongir's build (the structure). It replaced v1, which was archived to `~/projects/_archive/jas-ad-studio-web-v1` on 2026-09-22. This directory was called `jas-ad-studio-web-v2` until then; older notes that say `-v2` mean here. Planning docs live in the api repo: brief `../jas-ad-studio-api/docs/prompts/2026-09-13-frontend-rebuild.md`, design spec `../jas-ad-studio-api/docs/superpowers/specs/2026-09-13-web-v2-design.md`.
 
 **Never edit, build or restart v1 or the api from here.** v2 is a client of the unchanged API.
 
@@ -48,7 +48,7 @@ The gallery e2e tests use the real API (published examples); every signed-in scr
 ## Gotchas found building v2
 
 - **Sora, Manrope, Geist, Golos, Figtree and Archivo have no U+02BB**; Onest, Inter and Inter Tight do. `document.fonts.check()` returns true even when the glyph is missing, so only a rendered, zoomed screenshot proves it.
-- **Since 2026-09-13 v2 is the live site.** pm2 `jas-web` runs `pnpm dev` here on 3042 with `DEV_ALLOWED_ORIGINS=jas.kitobnarxi.uz`, and the `jas-ad-studio` tunnel serves it at https://jas.kitobnarxi.uz. v1 (`../jas-ad-studio-web`) is stopped and no longer in pm2. **Every saved edit here reaches real visitors on the next hot reload.** Run `pm2 save` (pm2 lives under Node 22: `~/.nvm/versions/node/v22.17.1/bin/pm2`) after changing the process.
+- **Since 2026-09-13 this is the live site.** pm2 `jas-web` runs `pnpm dev` here on 3042 with `DEV_ALLOWED_ORIGINS=jas.kitobnarxi.uz`, and the `jas-ad-studio` tunnel serves it at https://jas.kitobnarxi.uz. v1 is archived and no longer in pm2. **Every saved edit here reaches real visitors on the next hot reload.** Run `pm2 save` (pm2 lives under Node 22: `~/.nvm/versions/node/v22.17.1/bin/pm2`) after changing the process.
 - The API accepts writes only from `https://jas.kitobnarxi.uz` and `localhost:3042`. Google sign-in always returns to the public host, so Playwright tests signed-in screens on stubs.
 - **`GET /api/packs` returns only priced packs**, and there is no owner list endpoint, so the admin cannot set a *first* price from the UI. That is an API gap, not a UI bug.
 - **Hero photo slots are v1's indices (0–6)**, so the owner's saved `heroPhotos` overrides land on the same pictures (`src/lib/content.ts`).
